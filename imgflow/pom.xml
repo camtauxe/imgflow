@@ -4,20 +4,29 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <!-- Define the package name for the project -->
   <groupId>edu.nmsu.imgflow</groupId>
   <artifactId>imgflow</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>imgflow</name>
 
+  <!-- Define properties referred to elsewhere in the POM -->
   <properties>
-    <main.class>edu.nmsu.imgflow.Main</main.class>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- This is the class that contains the Main method -->
+    <main.class>edu.nmsu.imgflow.Main</main.class>
+
+    <!-- Define the verison of Java that we compile for -->
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
+  <!-- Define dependencies -->
   <dependencies>
+    <!-- Junit (for testing). We're not using this now but its here by
+     by default with Maven and we'll probably user it later anyway -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -26,7 +35,10 @@
     </dependency>
   </dependencies>
 
+  <!-- Add plugins to build process -->
   <build>
+
+    <!-- This was all here by default when I created the project. Please don't mess with it-->
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>
