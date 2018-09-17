@@ -12,6 +12,8 @@ import javafx.scene.paint.Color;
 
 import javafx.geometry.Point2D;
 
+import javafx.scene.text.Font;
+
 import javafx.beans.value.ChangeListener;
 import javafx.scene.input.MouseButton;
 import javafx.scene.Cursor;
@@ -371,6 +373,19 @@ public class Viewport {
                     GraphNode.NODE_WIDTH, GraphNode.NODE_HEIGHT
                 );
             }
+            // When drawing the title, we scale back to viewport size because text rendering
+            // may break otherwise.
+            ctx.save();
+            transformContextToCanvasSpace(ctx);
+
+            Font font = new Font(GraphNode.NODE_TITLE_SIZE * PIXELS_PER_UNIT * viewportZoom);
+            Point2D pos = graphCoordToCanvasCoord(node.getPosition().add(GraphNode.NODE_TITLE_POS));
+            ctx.setFill(Color.BLACK);
+            ctx.setFont(font);
+            ctx.fillText(node.getName(), pos.getX(), pos.getY());
+            ctx.fillRect(0.0, 0.0, 100.0, 100.0);
+
+            ctx.restore();
         }
     } 
 
@@ -387,6 +402,21 @@ public class Viewport {
             (canvas.getWidth()  / PIXELS_PER_UNIT / 2.0 / viewportZoom) - viewportCenter.getX(),
             (canvas.getHeight() / PIXELS_PER_UNIT / 2.0 / viewportZoom) - viewportCenter.getY()
         );
+    }
+
+    /**
+     * Transform the canvas context from drawing in graph coordinates to canvas coordinates.
+     * So that drawing a distance of 1 draws a length of one pixel and drawing at (0,0)
+     * draws in the upper-left-hand corner of the viewport.
+     */
+    private void transformContextToCanvasSpace(GraphicsContext ctx) {
+        ctx.translate(
+            viewportCenter.getX() - (canvas.getWidth()  / PIXELS_PER_UNIT / 2.0 / viewportZoom),
+            viewportCenter.getY() - (canvas.getHeight() / PIXELS_PER_UNIT / 2.0 / viewportZoom)
+        );
+
+        double scaleFactor = 1.0 / (PIXELS_PER_UNIT * viewportZoom);
+        ctx.scale(scaleFactor, scaleFactor);
     }
 
     /**
@@ -418,6 +448,20 @@ public class Viewport {
                 (canvas.getWidth()  / PIXELS_PER_UNIT / 2.0 / viewportZoom) - viewportCenter.getX(),
                 (canvas.getHeight() / PIXELS_PER_UNIT / 2.0 / viewportZoom) - viewportCenter.getY()
             ); 
+    }
+
+    /**
+     * Convert a point from a graph coordinate to canvas coordinates
+     * (This returns a new point and does not alter the given point (Point2D's are immutable))
+     */
+    private Point2D graphCoordToCanvasCoord(Point2D point) {
+        double scaleFactor = PIXELS_PER_UNIT * viewportZoom;
+        return point
+            .add(
+                (canvas.getWidth()  / PIXELS_PER_UNIT / 2.0 / viewportZoom) - viewportCenter.getX(),
+                (canvas.getHeight() / PIXELS_PER_UNIT / 2.0 / viewportZoom) - viewportCenter.getY()
+            )
+            .multiply(scaleFactor);
     }
 
     // ################################

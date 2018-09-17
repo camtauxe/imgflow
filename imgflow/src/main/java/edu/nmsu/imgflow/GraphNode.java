@@ -1,6 +1,7 @@
 package edu.nmsu.imgflow;
 
 import javafx.geometry.Point2D;
+import javafx.scene.text.Font;
 
 /**
  * Represents a single node on the image pipeline graph.
@@ -22,10 +23,13 @@ public abstract class GraphNode {
 
     // Sizing for drawings nodes.
     // Note that these are in GRAPH UNITS!!!
-    public static final double NODE_WIDTH  = 2.0;
-    public static final double NODE_HEIGHT = 2.0;
-    public static final double NODE_HEADER_HEIGHT  = 0.4;
-    public static final double NODE_HEADER_PADDING = 0.02;
+    public static final double  NODE_WIDTH  = 2.0;
+    public static final double  NODE_HEIGHT = 2.0;
+    public static final double  NODE_HEADER_HEIGHT  = 0.4;
+    public static final double  NODE_HEADER_PADDING = 0.1;
+    public static final Point2D NODE_TITLE_POS = new Point2D(NODE_HEADER_PADDING, NODE_HEADER_HEIGHT - NODE_HEADER_PADDING);
+    public static final double  NODE_TITLE_SIZE = 0.3;
+
 
     // ################################
     // # INSTANCE VARIABLES
