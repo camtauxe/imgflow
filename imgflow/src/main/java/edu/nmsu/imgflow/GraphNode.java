@@ -1,7 +1,6 @@
 package edu.nmsu.imgflow;
 
 import javafx.geometry.Point2D;
-import javafx.scene.text.Font;
 
 /**
  * Represents a single node on the image pipeline graph.

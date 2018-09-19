@@ -383,7 +383,6 @@ public class Viewport {
             ctx.setFill(Color.BLACK);
             ctx.setFont(font);
             ctx.fillText(node.getName(), pos.getX(), pos.getY());
-            ctx.fillRect(0.0, 0.0, 100.0, 100.0);
 
             ctx.restore();
         }
