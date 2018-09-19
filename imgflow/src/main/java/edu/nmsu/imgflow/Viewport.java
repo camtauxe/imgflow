@@ -12,8 +12,6 @@ import javafx.scene.paint.Color;
 
 import javafx.geometry.Point2D;
 
-import javafx.scene.text.Font;
-
 import javafx.beans.value.ChangeListener;
 import javafx.scene.input.MouseButton;
 import javafx.scene.Cursor;
@@ -184,7 +182,9 @@ public class Viewport {
         transformContextToGraphSpace(ctx);
 
         drawGrid(ctx);
-        drawGraph(ctx);
+        for (GraphNode node : graph.getNodes()) {
+            node.draw(this);
+        }
 
         ctx.restore(); // transform back
 
@@ -343,57 +343,18 @@ public class Viewport {
                 (viewportCenter.getX() + viewportWidth / 2.0), i
             );
         }
-    }
-
-    /**
-     * Draw all the nodes and connections of the graph
-     */
-    private void drawGraph(GraphicsContext ctx) {
-
-        // Iterate through each node in the graph
-        for (GraphNode node : graph.getNodes()) {
-            // Draw node background (semi-transparent black)
-            ctx.setFill(Color.web("black", 0.8));
-            ctx.fillRect(
-                node.getPosition().getX(), node.getPosition().getY(),
-                GraphNode.NODE_WIDTH, GraphNode.NODE_HEIGHT
-            );
-            // Draw node header
-            ctx.setFill(Color.LIMEGREEN);
-            ctx.fillRect(
-                node.getPosition().getX(), node.getPosition().getY(),
-                GraphNode.NODE_WIDTH, GraphNode.NODE_HEADER_HEIGHT
-            );
-            // If this node is being hovered over, draw a white outline around it
-            if (node == hoverNode) {
-                ctx.setStroke(Color.WHITE);
-                ctx.setLineWidth(2.5 / PIXELS_PER_UNIT / viewportZoom);
-                ctx.strokeRect(
-                    node.getPosition().getX(), node.getPosition().getY(),
-                    GraphNode.NODE_WIDTH, GraphNode.NODE_HEIGHT
-                );
-            }
-            // When drawing the title, we scale back to viewport size because text rendering
-            // may break otherwise.
-            ctx.save();
-            transformContextToCanvasSpace(ctx);
-
-            Font font = new Font(GraphNode.NODE_TITLE_SIZE * PIXELS_PER_UNIT * viewportZoom);
-            Point2D pos = graphCoordToCanvasCoord(node.getPosition().add(GraphNode.NODE_TITLE_POS));
-            ctx.setFill(Color.BLACK);
-            ctx.setFont(font);
-            ctx.fillText(node.getName(), pos.getX(), pos.getY());
-
-            ctx.restore();
-        }
     } 
+
+    // ################################
+    // # PUBLIC METHODS
+    // ################################
 
     /**
      * Transform the canvas context from drawing in canvas coordinates to graph coordinates.
      * So that drawing a distance of 1 draws a length of one graph unit regardless of zoom level
      * and drawing at (0,0) draws at the graph origin point regardless of viewport position.
      */
-    private void transformContextToGraphSpace(GraphicsContext ctx) {
+    public void transformContextToGraphSpace(GraphicsContext ctx) {
         double scaleFactor = PIXELS_PER_UNIT * viewportZoom;
         ctx.scale(scaleFactor, scaleFactor);
 
@@ -408,7 +369,7 @@ public class Viewport {
      * So that drawing a distance of 1 draws a length of one pixel and drawing at (0,0)
      * draws in the upper-left-hand corner of the viewport.
      */
-    private void transformContextToCanvasSpace(GraphicsContext ctx) {
+    public void transformContextToCanvasSpace(GraphicsContext ctx) {
         ctx.translate(
             viewportCenter.getX() - (canvas.getWidth()  / PIXELS_PER_UNIT / 2.0 / viewportZoom),
             viewportCenter.getY() - (canvas.getHeight() / PIXELS_PER_UNIT / 2.0 / viewportZoom)
@@ -423,7 +384,7 @@ public class Viewport {
      * @param point The point to check (in graph units)
      * @return The node overlapping the point (or null if no node is overlapping)
      */
-    private GraphNode getOverlappingNode(Point2D point) {
+    public GraphNode getOverlappingNode(Point2D point) {
         for (GraphNode node : graph.getNodes()) {
             if (
                 point.getX() >= node.getPosition().getX() &&
@@ -436,10 +397,26 @@ public class Viewport {
     }
 
     /**
+     * Convert a length in pixels on the canvas to length
+     * in graph units (at the viewport's current zoom level)
+     */
+    public double pixelsToGraphUnits(double pixels) {
+        return pixels / PIXELS_PER_UNIT / viewportZoom;
+    }
+
+    /**
+     * Convert a length in graph units to a length in pixels
+     * on the canvas (at the viewport's current zoom level)
+     */
+    public double graphUnitsToPixels(double units) {
+        return units * PIXELS_PER_UNIT * viewportZoom;
+    }
+
+    /**
      * Convert a point from canvas coordinates to a graph coordinate.
      * (This returns a new point and does not alter the given point (Point2D's are immutable))
      */
-    private Point2D canvasCoordToGraphCoord(Point2D point) {
+    public Point2D canvasCoordToGraphCoord(Point2D point) {
         double scaleFactor = 1.0 / PIXELS_PER_UNIT / viewportZoom;
         return point
             .multiply(scaleFactor)
@@ -453,7 +430,7 @@ public class Viewport {
      * Convert a point from a graph coordinate to canvas coordinates
      * (This returns a new point and does not alter the given point (Point2D's are immutable))
      */
-    private Point2D graphCoordToCanvasCoord(Point2D point) {
+    public Point2D graphCoordToCanvasCoord(Point2D point) {
         double scaleFactor = PIXELS_PER_UNIT * viewportZoom;
         return point
             .add(
@@ -471,5 +448,16 @@ public class Viewport {
      * Get the JavaFX containing this Viewport's GUI content
      */
     public Pane getPane() { return pane; }
+
+    /**
+     * Get the graphics context for this viewport's canvas
+     */
+    public GraphicsContext getGraphicsContext() { return canvas.getGraphicsContext2D(); }
+
+    /**
+     * Get the node that is currently being moused-over.
+     * Null if no node is being moused-over
+     */
+    public GraphNode getHoverNode() { return hoverNode; }
 
 }

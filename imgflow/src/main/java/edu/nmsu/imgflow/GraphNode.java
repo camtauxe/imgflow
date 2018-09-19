@@ -1,6 +1,9 @@
 package edu.nmsu.imgflow;
 
 import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 /**
  * Represents a single node on the image pipeline graph.
@@ -59,6 +62,39 @@ public abstract class GraphNode {
         name = getBaseName();
     }
 
+    /**
+     * Draw this node in the given viewport.
+     * This assumes that the graphics context in the viewport
+     * has already been transformed to graph space!!
+     */
+    public void draw(Viewport viewport) {
+        GraphicsContext ctx = viewport.getGraphicsContext();
+        // Draw node background (semi-transparent black)
+        ctx.setFill(Color.web("black", 0.8));
+        ctx.fillRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEIGHT);
+        // Draw node header
+        ctx.setFill(Color.LIMEGREEN);
+        ctx.fillRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEADER_HEIGHT);
+        // If this node is being hovered over, draw a white outline around it
+        if (this == viewport.getHoverNode()) {
+            ctx.setStroke(Color.WHITE);
+            ctx.setLineWidth(viewport.pixelsToGraphUnits(2.5));
+            ctx.strokeRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEIGHT);
+        }
+        // When drawing the title, we scale back to viewport size because text rendering
+        // may break otherwise.
+        ctx.save();
+        viewport.transformContextToCanvasSpace(ctx);
+
+        Font font =   new Font(viewport.graphUnitsToPixels(NODE_TITLE_SIZE));
+        Point2D pos = viewport.graphCoordToCanvasCoord(position.add(NODE_TITLE_POS));
+        ctx.setFill(Color.BLACK);
+        ctx.setFont(font);
+        ctx.fillText(getName(), pos.getX(), pos.getY());
+
+        ctx.restore();
+    }
+
     // ################################
     // # GETTERS / SETTERS
     // ################################
@@ -66,7 +102,7 @@ public abstract class GraphNode {
     /**
      * Get the node's base name, identifying the kind of the node this is.
      */
-    public String getBaseName() { return "Unnamed Node"; }
+    public String getBaseName() { return "Untitled"; }
 
     /**
      * Get the position of this node in the graph view. (in graph units)
