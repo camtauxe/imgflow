@@ -48,6 +48,10 @@ public abstract class GUIBuilder {
         Viewport viewport = new Viewport(Graph.buildTestGraph());
         pane.add(viewport.getPane(), 0, 0);
 
+        viewport.addNodeSelectListener((node) -> {
+            System.out.println("Node selection: " + node);
+        });
+
         return pane;
     }
 }

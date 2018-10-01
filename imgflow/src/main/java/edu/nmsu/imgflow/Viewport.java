@@ -1,5 +1,7 @@
 package edu.nmsu.imgflow;
 
+import java.util.ArrayList;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -101,6 +103,16 @@ public class Viewport {
      * (relative to the position of the node, in graph units). Null if no node is being dragged.
      */
     private Point2D draggingNodeOffset;
+    /**
+     * The node that is currently selected, or null if no node is selected.
+     */
+    private GraphNode selectedNode;
+    /**
+     * The list of registered node selection listeners, triggered
+     * when the selection changes.
+     */
+    private ArrayList<NodeSelectListener> nodeSelectListeners;
+
 
     /**
      * The JavaFX GridPane containing the canvas and other controls
@@ -120,6 +132,7 @@ public class Viewport {
      */
     public Viewport(Graph graph) {
         this.graph = graph;
+        nodeSelectListeners = new ArrayList<NodeSelectListener>();
         buildPane();
     }
 
@@ -281,6 +294,20 @@ public class Viewport {
 
         // Handle a mouse button release
         canvas.setOnMouseReleased((mouseEvent) -> {
+            // Select a node if one is being hovered over
+            // Otherwise, deselect the selected node
+            if (hoverNode != null && hoverNode != selectedNode) {
+                selectedNode = hoverNode;
+                redraw();
+                for (NodeSelectListener listener : nodeSelectListeners)
+                    listener.handle(selectedNode);
+            }
+            else if (hoverNode == null && selectedNode != null) {
+                selectedNode = null;
+                redraw();
+                for (NodeSelectListener listener : nodeSelectListeners)
+                    listener.handle(null);
+            }
             if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
             dragAnchor          = null;
             draggingNode        = null;
@@ -440,6 +467,15 @@ public class Viewport {
             .multiply(scaleFactor);
     }
 
+    /**
+     * Add a node select listener to this viewport. It will be invoked
+     * whenever the selected node changes (this includes when a node
+     * is deselected)
+     */
+    public void addNodeSelectListener(NodeSelectListener listener) {
+        nodeSelectListeners.add(listener);
+    }
+
     // ################################
     // # GETTERS / SETTERS
     // ################################
@@ -459,5 +495,11 @@ public class Viewport {
      * Null if no node is being moused-over
      */
     public GraphNode getHoverNode() { return hoverNode; }
+
+    /**
+     * Get the currently selected node.
+     * Null if no node is selected.
+     */
+    public GraphNode getSelectedNode() { return selectedNode; }
 
 }

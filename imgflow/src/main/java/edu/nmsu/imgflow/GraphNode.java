@@ -1,5 +1,7 @@
 package edu.nmsu.imgflow;
 
+import java.util.ArrayList;
+
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -40,11 +42,16 @@ public abstract class GraphNode {
     /**
      * The position of the node in the Graph view (IN GRAPH UNITS)
      */
-    private Point2D position;
+    protected Point2D position;
     /**
      * The name of this individual node
      */
-    private String  name;
+    protected String  name;
+
+    /**
+     * A list of this node's properties.
+     */
+    protected ArrayList<NodeProperty<?>> properties;
 
     // ################################
     // # METHODS
@@ -58,8 +65,9 @@ public abstract class GraphNode {
      * be called as 'super()' in the constructor of a subclass
      */
     public GraphNode() {
-        position = new Point2D(0.0, 0.0);
-        name = getBaseName();
+        position    = new Point2D(0.0, 0.0);
+        name        = getBaseName();
+        properties  = new ArrayList<NodeProperty<?>>();
     }
 
     /**
@@ -75,9 +83,10 @@ public abstract class GraphNode {
         // Draw node header
         ctx.setFill(Color.LIMEGREEN);
         ctx.fillRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEADER_HEIGHT);
-        // If this node is being hovered over, draw a white outline around it
-        if (this == viewport.getHoverNode()) {
-            ctx.setStroke(Color.WHITE);
+        // If this node is selected or being hovered over, draw an outline around it
+        if (this == viewport.getHoverNode() || this == viewport.getSelectedNode()) {
+            // Set outline color depending on if node is selected or just being hovered over
+            ctx.setStroke(this == viewport.getSelectedNode() ? Color.YELLOW : Color.WHITE);
             ctx.setLineWidth(viewport.pixelsToGraphUnits(2.5));
             ctx.strokeRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEIGHT);
         }
@@ -121,4 +130,9 @@ public abstract class GraphNode {
      * Set the namme of this individual node.
      */
     public void     setName(String name) { this.name = name; }
+
+    /**
+     * Get the list of this node's properties
+     */
+    public ArrayList<NodeProperty<?>> getProperties() { return properties; }
 }
