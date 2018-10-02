@@ -19,7 +19,7 @@ public abstract class GUIBuilder {
      * The Pane is a GridPane with 2 columns. The right-most column is of a fixed-width
      * while the left-most column grows to fill the remaining space. The left column contains
      * an instance of Viewport (referring to a new Graph instance) while the right column
-     * contains information and settings pertaining to the currently selected Node (not yet implemented)
+     * contains the property panel whose contents change depending on the selected node.
      * 
      * @return The created JavaFX Pane
      */
@@ -48,8 +48,14 @@ public abstract class GUIBuilder {
         Viewport viewport = new Viewport(Graph.buildTestGraph());
         pane.add(viewport.getPane(), 0, 0);
 
+        // Create Property Panel and add to first row, second column
+        PropertyPanel propertyPanel = new PropertyPanel();
+        pane.add(propertyPanel.getPane(), 1, 0);
+
+        // Update contents of property panel when the selection
+        // in the viewport changes
         viewport.addNodeSelectListener((node) -> {
-            System.out.println("Node selection: " + node);
+            propertyPanel.updateSelectedNode(node);
         });
 
         return pane;

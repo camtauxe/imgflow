@@ -5,7 +5,6 @@ package edu.nmsu.imgflow;
  * of the application can respond to nodes in the Viewport being selected
  * or de-selected.
  */
-
 public interface NodeSelectListener {
     /**
      * Respond to node selection or de-selection
