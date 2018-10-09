@@ -30,7 +30,7 @@ public class HoverQuery {
                 hoveringNode = node;
                 overHeader = relPos.getY() <= GraphNode.NODE_ROW_HEIGHT;
 
-                // @TODO: Calculate hoveringOutputSocket and hoveringInputSocket
+                // TODO: Calculate hoveringOutputSocket and hoveringInputSocket
                 return;
             }
         }
