@@ -79,20 +79,14 @@ public class Viewport {
      */
     private Graph graph;
     /**
-     * If a node is being hovered-over with the mouse, this references it.
-     * Null if no node is being hovered-over.
+     * The HoverQuery with information regarding what the mouse is
+     * currently hovering over
      */
-    private GraphNode hoverNode;
+    private HoverQuery hoverQuery;
     /**
-     * The value of hoverNode from the last mouse movement event
+     * The HoverQuery from the last mouse event
      */
-    private GraphNode prevHoverNode;
-    /**
-     * If a node is being hovered-over with the mouse, this represents whether
-     * or not the mouse is over the header specifically of the node. Null
-     * if no no node is being hovered-over.
-     */
-    private boolean hoverOverHeader;
+    private HoverQuery prevHoverQuery;
     /**
      * If a node is currently being clicked-and-dragged by the mouse, this references it.
      * Null if no node is being dragged.
@@ -133,6 +127,8 @@ public class Viewport {
     public Viewport(Graph graph) {
         this.graph = graph;
         nodeSelectListeners = new ArrayList<NodeSelectListener>();
+        prevHoverQuery = HoverQuery.NO_HOVER;
+        hoverQuery = HoverQuery.NO_HOVER;
         buildPane();
     }
 
@@ -230,25 +226,22 @@ public class Viewport {
         canvas.setOnMouseMoved((mouseEvent) -> {
             // Get coordinate of mouse in graph units
             Point2D graphCoord = canvasCoordToGraphCoord(new Point2D(mouseEvent.getX(), mouseEvent.getY()));
-            // Get the node the mouse is over (or null if it isn't over one)
-            hoverNode = getOverlappingNode(graphCoord);
+            // update hoverQuery
+            hoverQuery = HoverQuery.query(graph, graphCoord);
 
-            // If we are over a node, set hoverOverHeader and change cursor accordingly
-            if (hoverNode != null) {
-                hoverOverHeader =
-                    ( graphCoord.getY() - hoverNode.getPosition().getY() ) < GraphNode.NODE_HEADER_HEIGHT;
-                if (hoverOverHeader)
+            // If we are over a node, set cursor accordingly
+            if (hoverQuery != HoverQuery.NO_HOVER) {
+                if (hoverQuery.isOverHeader())
                     Main.getInstance().getScene().setCursor(Cursor.MOVE);
                 else
                     Main.getInstance().getScene().setCursor(Cursor.DEFAULT);
             }
-            // If the hoverNode value has changed from last time, change cursor and redraw
-            if (hoverNode != prevHoverNode) {
-                if (hoverNode == null) {
+            // If the hoveringNode has changed from the last mouse event, update cursor and redraw
+            if (hoverQuery.getHoveringNode() != prevHoverQuery.getHoveringNode()) {
+                if (hoverQuery == HoverQuery.NO_HOVER) {
                     Main.getInstance().getScene().setCursor(Cursor.HAND);
-                    hoverOverHeader = false;
                 }
-                prevHoverNode = hoverNode;
+                prevHoverQuery = hoverQuery;
                 redraw();
             }
         });
@@ -263,8 +256,8 @@ public class Viewport {
             Point2D graphCoord = canvasCoordToGraphCoord(pixelCoord);
 
             // If hovering over the header of a node, initiate a drag for that node
-            if (hoverNode != null && hoverOverHeader) {
-                draggingNode = hoverNode;
+            if (hoverQuery.isOverHeader()) {
+                draggingNode = hoverQuery.getHoveringNode();
                 draggingNodeOffset = graphCoord.subtract(draggingNode.getPosition());
             }
             // Otherwise, initiate a drag to pan the view
@@ -296,13 +289,13 @@ public class Viewport {
         canvas.setOnMouseReleased((mouseEvent) -> {
             // Select a node if one is being hovered over
             // Otherwise, deselect the selected node
-            if (hoverNode != null && hoverNode != selectedNode) {
-                selectedNode = hoverNode;
+            if (hoverQuery != HoverQuery.NO_HOVER && hoverQuery.getHoveringNode() != selectedNode) {
+                selectedNode = hoverQuery.getHoveringNode();
                 redraw();
                 for (NodeSelectListener listener : nodeSelectListeners)
                     listener.handle(selectedNode);
             }
-            else if (hoverNode == null && selectedNode != null) {
+            else if (hoverQuery == HoverQuery.NO_HOVER && selectedNode != null) {
                 selectedNode = null;
                 redraw();
                 for (NodeSelectListener listener : nodeSelectListeners)
@@ -370,7 +363,7 @@ public class Viewport {
                 (viewportCenter.getX() + viewportWidth / 2.0), i
             );
         }
-    } 
+    }
 
     // ################################
     // # PUBLIC METHODS
@@ -404,23 +397,6 @@ public class Viewport {
 
         double scaleFactor = 1.0 / (PIXELS_PER_UNIT * viewportZoom);
         ctx.scale(scaleFactor, scaleFactor);
-    }
-
-    /**
-     * Get the node on the graph that the given point is overlapping
-     * @param point The point to check (in graph units)
-     * @return The node overlapping the point (or null if no node is overlapping)
-     */
-    public GraphNode getOverlappingNode(Point2D point) {
-        for (GraphNode node : graph.getNodes()) {
-            if (
-                point.getX() >= node.getPosition().getX() &&
-                point.getX() <= node.getPosition().getX() + GraphNode.NODE_WIDTH &&
-                point.getY() >= node.getPosition().getY() &&
-                point.getY() <= node.getPosition().getY() + GraphNode.NODE_WIDTH
-            ) { return node; }
-        }
-        return null;
     }
 
     /**
@@ -491,10 +467,10 @@ public class Viewport {
     public GraphicsContext getGraphicsContext() { return canvas.getGraphicsContext2D(); }
 
     /**
-     * Get the node that is currently being moused-over.
-     * Null if no node is being moused-over
+     * Get the current hover query containing information about what is 
+     * being hovered over in the viewport
      */
-    public GraphNode getHoverNode() { return hoverNode; }
+    public HoverQuery getHoverQuery() { return hoverQuery; }
 
     /**
      * Get the currently selected node.

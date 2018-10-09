@@ -28,10 +28,14 @@ public abstract class GraphNode {
     // Sizing for drawings nodes.
     // Note that these are in GRAPH UNITS!!!
     public static final double  NODE_WIDTH  = 2.0;
-    public static final double  NODE_HEIGHT = 2.0;
-    public static final double  NODE_HEADER_HEIGHT  = 0.4;
-    public static final double  NODE_HEADER_PADDING = 0.1;
-    public static final Point2D NODE_TITLE_POS = new Point2D(NODE_HEADER_PADDING, NODE_HEADER_HEIGHT - NODE_HEADER_PADDING);
+    // A node is drawn split up into rows: the top being the header and additional rows
+    // below it being drawn beneath it for each input or output socket
+    public static final double  NODE_ROW_HEIGHT  = 0.4;
+    public static final double  NODE_ROW_PADDING = 0.1;
+    public static final double  NODE_SOCKET_SIZE = NODE_ROW_HEIGHT - (2 * NODE_ROW_PADDING);
+    // This is the position relative to the top-left corner of the node that corresponds
+    // to the beginning of the baseline for the node title text
+    public static final Point2D NODE_TITLE_POS = new Point2D(NODE_ROW_PADDING, NODE_ROW_HEIGHT - NODE_ROW_PADDING);
     public static final double  NODE_TITLE_SIZE = 0.3;
 
 
@@ -53,22 +57,66 @@ public abstract class GraphNode {
      */
     protected ArrayList<NodeProperty<?>> properties;
 
+    /**
+     * The list of all of this node's input sockets
+     */
+    protected ArrayList<NodeSocketInput> inputSockets;
+
+    /**
+     * The list of all of this node's output sockets
+     */
+    protected ArrayList<NodeSocketOutput> outputSockets;
+
+    // ################################
+    // # CONSTRUCTOR
+    // ################################
+
+    /**
+     * Create a new GraphNode at position (0,0)
+     * and with a default name equivalent to its base name.
+     * 
+     * GraphNode is abstract so this can not be called directly, and must
+     * be called as 'super()' in the constructor of a subclass.
+     */
+    public GraphNode() {
+        // Instantiate instance variables
+        position        = new Point2D(0.0, 0.0);
+        name            = getBaseName();
+        properties      = new ArrayList<NodeProperty<?>>();
+        inputSockets    = new ArrayList<NodeSocketInput>();
+        outputSockets   = new ArrayList<NodeSocketOutput>();
+
+        // Instantiate all input and output sockets
+        int numInputs = getNumInputSockets();
+        for (int i = 0; i < numInputs; i++)
+            inputSockets.add(new NodeSocketInput(this));
+
+        int numOutputs = getNumOutputSockets();
+        for (int i = 0; i < numOutputs; i++)
+            outputSockets.add(new NodeSocketOutput(this));
+    }
+
     // ################################
     // # METHODS
     // ################################
 
+    // The methods here are roughly sorted by how likely you
+    // are to want to override them in a subclass (with more likely at the top)
+
     /**
-     * Constructor: Create a new GraphNode at position (0,0)
-     * and with a default name equivalent to its base name.
-     * 
-     * GraphNode is abstract so this can not be called directly, and must
-     * be called as 'super()' in the constructor of a subclass
+     * Get the node's base name, identifying the kind of the node this is.
      */
-    public GraphNode() {
-        position    = new Point2D(0.0, 0.0);
-        name        = getBaseName();
-        properties  = new ArrayList<NodeProperty<?>>();
-    }
+    public String getBaseName() { return "Untitled"; }
+
+    /**
+     * Get the number of input sockets this kind of node has
+     */
+    public int getNumInputSockets() { return 1; }
+
+    /**
+     * Get the number of output sockets this kind of node has
+     */
+    public int getNumOutputSockets() { return 1; }
 
     /**
      * Draw this node in the given viewport.
@@ -77,22 +125,22 @@ public abstract class GraphNode {
      */
     public void draw(Viewport viewport) {
         GraphicsContext ctx = viewport.getGraphicsContext();
-        // Draw node background (semi-transparent black)
-        ctx.setFill(Color.web("black", 0.8));
-        ctx.fillRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEIGHT);
-        // Draw node header
+        // transform the canvas context to draw relative to the node's position
+        ctx.save();
+        ctx.translate(position.getX(), position.getY());
+
+        // keep track of how far down the node we're drawing
+        double cursorY      = 0.0;
+
+        // Draw header
         ctx.setFill(Color.LIMEGREEN);
-        ctx.fillRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEADER_HEIGHT);
-        // If this node is selected or being hovered over, draw an outline around it
-        if (this == viewport.getHoverNode() || this == viewport.getSelectedNode()) {
-            // Set outline color depending on if node is selected or just being hovered over
-            ctx.setStroke(this == viewport.getSelectedNode() ? Color.YELLOW : Color.WHITE);
-            ctx.setLineWidth(viewport.pixelsToGraphUnits(2.5));
-            ctx.strokeRect(position.getX(), position.getY(), NODE_WIDTH, NODE_HEIGHT);
-        }
+        ctx.fillRect(0.0, cursorY, NODE_WIDTH, NODE_ROW_HEIGHT);
+        cursorY += NODE_ROW_HEIGHT;
+
         // When drawing the title, we scale back to viewport size because text rendering
         // may break otherwise.
         ctx.save();
+        ctx.translate(-position.getX(), -position.getY());
         viewport.transformContextToCanvasSpace(ctx);
 
         Font font =   new Font(viewport.graphUnitsToPixels(NODE_TITLE_SIZE));
@@ -101,17 +149,43 @@ public abstract class GraphNode {
         ctx.setFont(font);
         ctx.fillText(getName(), pos.getX(), pos.getY());
 
+        // return to drawing relative to node posittion (in graph units)
+        ctx.restore();
+
+        // Draw rows
+        int rowsToDraw   = Math.max(getNumInputSockets(), getNumOutputSockets());
+        for (int i = 0; i < rowsToDraw; i++) {
+            // alternate between different shades for background color
+            ctx.setFill(i % 2 == 0 ? Color.web("black",0.8) : Color.web("black",0.7));
+            ctx.fillRect(0.0, cursorY, NODE_WIDTH, NODE_ROW_HEIGHT);
+            // draw sockets
+            ctx.setFill(Color.YELLOW);
+            // draw input socket if there is one
+            if (inputSockets.size() > i) {
+                ctx.fillRect(0.0, cursorY + NODE_ROW_PADDING, NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
+            }
+            // draw output socket if there is one
+            if (outputSockets.size() > i) {
+                ctx.fillRect(NODE_WIDTH - NODE_SOCKET_SIZE, cursorY + NODE_ROW_PADDING, NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
+            }
+            cursorY += NODE_ROW_HEIGHT;
+        }
+
+        // Draw outline if node is being hovered over or selected
+        if (viewport.getHoverQuery().getHoveringNode() == this || viewport.getSelectedNode() == this) {
+            ctx.setLineWidth(viewport.pixelsToGraphUnits(3.0));
+            // outline color depends on if this node is selected or not
+            ctx.setStroke(viewport.getSelectedNode() == this ? Color.YELLOW : Color.WHITE);
+            ctx.strokeRect(0.0, 0.0, NODE_WIDTH, cursorY);
+        }
+
+        // return drawing relative to graph origin (in graph units)
         ctx.restore();
     }
 
     // ################################
     // # GETTERS / SETTERS
     // ################################
-
-    /**
-     * Get the node's base name, identifying the kind of the node this is.
-     */
-    public String getBaseName() { return "Untitled"; }
 
     /**
      * Get the position of this node in the graph view. (in graph units)
