@@ -233,6 +233,8 @@ public class Viewport {
             if (hoverQuery != HoverQuery.NO_HOVER) {
                 if (hoverQuery.isOverHeader())
                     Main.getInstance().getScene().setCursor(Cursor.MOVE);
+                else if (hoverQuery.isOverSocket())
+                    Main.getInstance().getScene().setCursor(Cursor.CROSSHAIR);
                 else
                     Main.getInstance().getScene().setCursor(Cursor.DEFAULT);
             }

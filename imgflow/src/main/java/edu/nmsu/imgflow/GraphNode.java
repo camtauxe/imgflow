@@ -13,7 +13,9 @@ import javafx.scene.text.Font;
  * Each node has a number of input and output sockets and performs some function
  * mapping image data on the inputs to image data sent to the outputs. Each node also
  * maintains its position on the node graph view and has a name and a base name
- * which is different. The base name identifies the type of the node 
+ * which is different.
+ * 
+ * The base name identifies the type of the node 
  * (and is set for an entire subclass of GraphNode) while the name identifies an individual
  * node and is set by the user. For example: A type of node that performs a Gaussian Blur on its input
  * would have a base name of "Gaussian Blur" while individual nodes on the graph may have names like
@@ -67,6 +69,11 @@ public abstract class GraphNode {
      */
     protected ArrayList<NodeSocketOutput> outputSockets;
 
+    /**
+     * The list of all of this node's sockets (inputs and outputs concatenated together)
+     */
+    protected ArrayList<NodeSocket> allSockets;
+
     // ################################
     // # CONSTRUCTOR
     // ################################
@@ -85,15 +92,22 @@ public abstract class GraphNode {
         properties      = new ArrayList<NodeProperty<?>>();
         inputSockets    = new ArrayList<NodeSocketInput>();
         outputSockets   = new ArrayList<NodeSocketOutput>();
+        allSockets      = new ArrayList<NodeSocket>();
 
         // Instantiate all input and output sockets
         int numInputs = getNumInputSockets();
-        for (int i = 0; i < numInputs; i++)
-            inputSockets.add(new NodeSocketInput(this));
+        for (int i = 0; i < numInputs; i++) {
+            NodeSocketInput socket = new NodeSocketInput(this, i);
+            inputSockets.add(socket);
+            allSockets.add(socket);
+        }
 
         int numOutputs = getNumOutputSockets();
-        for (int i = 0; i < numOutputs; i++)
-            outputSockets.add(new NodeSocketOutput(this));
+        for (int i = 0; i < numOutputs; i++) {
+            NodeSocketOutput socket = new NodeSocketOutput(this, i);
+            outputSockets.add(socket);
+            allSockets.add(socket);
+        }
     }
 
     // ################################
@@ -158,17 +172,15 @@ public abstract class GraphNode {
             // alternate between different shades for background color
             ctx.setFill(i % 2 == 0 ? Color.web("black",0.8) : Color.web("black",0.7));
             ctx.fillRect(0.0, cursorY, NODE_WIDTH, NODE_ROW_HEIGHT);
-            // draw sockets
-            ctx.setFill(Color.YELLOW);
-            // draw input socket if there is one
-            if (inputSockets.size() > i) {
-                ctx.fillRect(0.0, cursorY + NODE_ROW_PADDING, NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
-            }
-            // draw output socket if there is one
-            if (outputSockets.size() > i) {
-                ctx.fillRect(NODE_WIDTH - NODE_SOCKET_SIZE, cursorY + NODE_ROW_PADDING, NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
-            }
             cursorY += NODE_ROW_HEIGHT;
+        }
+
+        // Draw sockets
+        ctx.setFill(Color.YELLOW);
+        for (NodeSocket socket : allSockets) {
+            // color depends on if socket is being hovered or not
+            // ctx.setFill(viewport.getHoverQuery().getHoveringSocket() == socket ? Color.ORANGE : Color.YELLOW);
+            ctx.fillRect(socket.getPosition().getX(), socket.getPosition().getY(), NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
         }
 
         // Draw outline if node is being hovered over or selected
@@ -209,4 +221,19 @@ public abstract class GraphNode {
      * Get the list of this node's properties
      */
     public ArrayList<NodeProperty<?>> getProperties() { return properties; }
+
+    /**
+     * Get the list of this node's input sockets
+     */
+    public ArrayList<NodeSocketInput> getInputSockkets() { return inputSockets; }
+
+    /**
+     * Get the list of this node's output sockets
+     */
+    public ArrayList<NodeSocketOutput> getOutputSockets() { return outputSockets; }
+
+    /**
+     * Get the list of all of this node's sockets (inputs and outputs concatenated together)
+     */
+    public ArrayList<NodeSocket> getAllSockets() { return allSockets; }
 }
