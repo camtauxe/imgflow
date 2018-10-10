@@ -1,6 +1,5 @@
 package edu.nmsu.imgflow;
 
-import java.net.SocketAddress;
 import java.util.ArrayList;
 
 import javafx.scene.layout.Pane;
@@ -337,7 +336,7 @@ public class Viewport {
             else {
                 // If a node is being hovered over, select it (if it isn't already selected)
                 // and start drawing a connection if over a socket
-                if (hoverQuery != hoverQuery.NO_HOVER) {
+                if (hoverQuery != HoverQuery.NO_HOVER) {
                     if (hoverQuery.isOverSocket()) {
                         connectingSocket = hoverQuery.getHoveringSocket();
                     }
