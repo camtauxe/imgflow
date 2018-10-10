@@ -1,5 +1,6 @@
 package edu.nmsu.imgflow;
 
+import java.net.SocketAddress;
 import java.util.ArrayList;
 
 import javafx.scene.layout.Pane;
@@ -106,6 +107,16 @@ public class Viewport {
      * when the selection changes.
      */
     private ArrayList<NodeSelectListener> nodeSelectListeners;
+    /**
+     * If a connection is being drawn,
+     * this references the socket the connection
+     */
+    private NodeSocket connectingSocket;
+    /**
+     * The end-position of the line being drawn when drawing a connection.
+     * Usually over the mouse cursor. Null if no line is being drawn
+     */
+    private Point2D connectingPoint;
 
 
     /**
@@ -195,6 +206,14 @@ public class Viewport {
             node.draw(this);
         }
 
+        // Draw connecting line if a connection is being drawn
+        if (connectingSocket != null) {
+            ctx.setLineWidth(pixelsToGraphUnits(5.0));
+            ctx.setStroke(Color.RED);
+            Point2D fromPos = connectingSocket.getPosition().add(connectingSocket.getParentNode().getPosition());
+            ctx.strokeLine(fromPos.getX(), fromPos.getY(), connectingPoint.getX(), connectingPoint.getY());
+        }
+
         ctx.restore(); // transform back
 
         // Draw border
@@ -229,8 +248,8 @@ public class Viewport {
             // update hoverQuery
             hoverQuery = HoverQuery.query(graph, graphCoord);
 
-            // If we are over a node, set cursor accordingly
-            if (hoverQuery != HoverQuery.NO_HOVER) {
+            // If no connection is being drawn, update mouse cursor
+            if (connectingSocket == null) {
                 if (hoverQuery.isOverHeader())
                     Main.getInstance().getScene().setCursor(Cursor.MOVE);
                 else if (hoverQuery.isOverSocket())
@@ -238,11 +257,14 @@ public class Viewport {
                 else
                     Main.getInstance().getScene().setCursor(Cursor.DEFAULT);
             }
-            // If the hoveringNode has changed from the last mouse event, update cursor and redraw
+            // If a connection is being drawn, update connectingPoint and redraw
+            else {
+                connectingPoint = graphCoord;
+                redraw();
+            }
+
+            // If the hoveringNode has changed from the last mouse event, redraw
             if (hoverQuery.getHoveringNode() != prevHoverQuery.getHoveringNode()) {
-                if (hoverQuery == HoverQuery.NO_HOVER) {
-                    Main.getInstance().getScene().setCursor(Cursor.HAND);
-                }
                 prevHoverQuery = hoverQuery;
                 redraw();
             }
@@ -289,24 +311,53 @@ public class Viewport {
 
         // Handle a mouse button release
         canvas.setOnMouseReleased((mouseEvent) -> {
-            // Select a node if one is being hovered over
-            // Otherwise, deselect the selected node
-            if (hoverQuery != HoverQuery.NO_HOVER && hoverQuery.getHoveringNode() != selectedNode) {
-                selectedNode = hoverQuery.getHoveringNode();
-                redraw();
-                for (NodeSelectListener listener : nodeSelectListeners)
-                    listener.handle(selectedNode);
-            }
-            else if (hoverQuery == HoverQuery.NO_HOVER && selectedNode != null) {
-                selectedNode = null;
-                redraw();
-                for (NodeSelectListener listener : nodeSelectListeners)
-                    listener.handle(null);
-            }
+            // We only care about the left mouse button
             if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
-            dragAnchor          = null;
-            draggingNode        = null;
-            draggingNodeOffset  = null;
+
+            // If drawing a connection, drop it if not over a socket,
+            // or connect it if it is over another socket
+            if (connectingSocket != null) {
+                if (hoverQuery.isOverSocket() && hoverQuery.getHoveringSocket() != connectingSocket) {
+                    NodeSocket socket = hoverQuery.getHoveringSocket();
+                    if (socket instanceof NodeSocketInput && connectingSocket instanceof NodeSocketOutput) {
+                        NodeSocketInput in = (NodeSocketInput)socket;
+                        NodeSocketOutput out = (NodeSocketOutput)connectingSocket;
+                        out.connect(in);
+                    }
+                    else if (socket instanceof NodeSocketOutput && connectingSocket instanceof NodeSocketInput) {
+                        NodeSocketInput in = (NodeSocketInput)connectingSocket;
+                        NodeSocketOutput out = (NodeSocketOutput)socket;
+                        in.connect(out);
+                    }
+                }
+                connectingSocket = null;
+                connectingPoint = null;
+                redraw();
+            }
+            else {
+                // If a node is being hovered over, select it (if it isn't already selected)
+                // and start drawing a connection if over a socket
+                if (hoverQuery != hoverQuery.NO_HOVER) {
+                    if (hoverQuery.isOverSocket()) {
+                        connectingSocket = hoverQuery.getHoveringSocket();
+                    }
+                    if (hoverQuery.getHoveringNode() != selectedNode) {
+                        selectedNode = hoverQuery.getHoveringNode();
+                        for (NodeSelectListener listener : nodeSelectListeners)
+                            listener.handle(selectedNode);
+                    }
+                }
+                // If no node is being hovered over, deselect if one is selected
+                else if (selectedNode != null) {
+                    selectedNode = null;
+                    redraw();
+                    for (NodeSelectListener listener : nodeSelectListeners)
+                        listener.handle(null);
+                }
+                dragAnchor          = null;
+                draggingNode        = null;
+                draggingNodeOffset  = null;
+            }
         });
 
         // Handle a mouse scroll

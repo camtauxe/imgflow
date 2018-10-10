@@ -36,5 +36,5 @@ public class NodeSocketInput extends NodeSocket {
      * Connect this socket to the given output socket.
      * TODO: Check to make sure you aren't connecting to a socket on the same node
      */
-    public void setConnectingSocket(NodeSocketOutput outputSocket) { connectingSocket = outputSocket; }
+    public void connect(NodeSocketOutput outputSocket) { connectingSocket = outputSocket; }
 }
