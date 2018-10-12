@@ -30,11 +30,10 @@ public class NodePropertySlider extends NodeProperty<Integer> {
     private int     sliderMax;
 
     /**
-     * Create a new NodePropertySlider with the given min, max
-     * and name.
+     * Create a new NodePropertySlider with the given parent node, min, max and name.
      */
-    public NodePropertySlider(String name, int min, int max) {
-        super();
+    public NodePropertySlider(GraphNode parent, String name, int min, int max) {
+        super(parent);
         this.name = name;
         sliderMin = min;
         sliderMax = max;

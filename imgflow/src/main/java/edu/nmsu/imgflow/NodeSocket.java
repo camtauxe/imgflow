@@ -1,6 +1,7 @@
 package edu.nmsu.imgflow;
 
 import javafx.geometry.Point2D;
+import javafx.scene.image.WritableImage;
 
 /**
  * A NodeSocket represents a point on a node that can be connected to
@@ -59,6 +60,20 @@ public abstract class NodeSocket {
 
     public void disconnect() {
         /** This should be overriden by a derived class */
+    }
+
+    public void propagateUpdate() {
+        
+    }
+
+    public boolean needsUpdate() {
+        /** This should be overriden by a derived class */
+        return false;
+    }
+
+    public WritableImage getImage() {
+        /** This should be overriden by a derived class */
+        return null;
     }
 
     // ################################

@@ -1,5 +1,6 @@
 package edu.nmsu.imgflow;
 
+import javafx.geometry.Insets;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
@@ -32,7 +33,8 @@ public class PropertyPanel {
      * Construct a new PropertyPanel with no selected node
      */
     public PropertyPanel() {
-        vbox = new VBox();
+        vbox = new VBox(10.0);
+        vbox.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
         noSelectionLabel = new Label("No Node selected...");
         updateSelectedNode(null);
     }

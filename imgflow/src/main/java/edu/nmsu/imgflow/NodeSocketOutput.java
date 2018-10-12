@@ -1,6 +1,7 @@
 package edu.nmsu.imgflow;
 
 import javafx.geometry.Point2D;
+import javafx.scene.image.WritableImage;
 
 /**
  * A NodeSocketOutput is a NodeSocket that sends data out of a node
@@ -13,6 +14,20 @@ public class NodeSocketOutput extends NodeSocket {
      * Or null if this socket is not connected
      */
     private NodeSocketInput connectingSocket;
+
+    /**
+     * The image that this socket sends to any connected input
+     * sockets.
+     */
+    private WritableImage image;
+
+    /**
+     * If this is true, then it means that the image data stored in this socket's image
+     * is out-of-date with the state of the graph/node properties and that this socket's
+     * node's update() function will need to be called to re-render the image and get
+     * the latest data
+     */
+    private boolean needsUpdateFlag;
 
     /**
      * Create a new NodeSocketOutput for the given node at the given index.
@@ -62,10 +77,40 @@ public class NodeSocketOutput extends NodeSocket {
             inputSocket.disconnect();
     }
 
+    public void propagateUpdate() {
+        needsUpdateFlag = true;
+        if (connectingSocket != null)
+            connectingSocket.propagateUpdate();
+    }
+
     /**
      * Get the input socket that this socket is connected to.
      * Or null if this socket is not connected to anything.
      */
     public NodeSocketInput getConnectingSocket() { return connectingSocket; }
+
+    /**
+     * Get this socket's image data. If needsUpdate() returns true, then this
+     * data will be out-of-date with the state of the graph. Call this socket's
+     * parent node's update() function to re-render and update the image.
+     */
+    public WritableImage getImage() { return image; }
+
+    /**
+     * Set this socket's image data
+     */
+    public void setImage(WritableImage newImage) { image = newImage; }
+
+    /**
+     * Get the state of the socket's needsUpdateFlag, which indicates whether or not
+     * the socket's image data is out-of-date with the state of the graph.
+     */
+    public boolean needsUpdate() { return needsUpdateFlag; }
+
+    /**
+     * Set the state of the socket's needsUpdateFlag. Please only set this to false
+     * when you are sure that the socket's image data is up-to-date
+     */
+    public void setNeedsUpdate(boolean flag) { needsUpdateFlag = flag; }
 
 }

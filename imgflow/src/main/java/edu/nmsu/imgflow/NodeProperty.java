@@ -20,12 +20,17 @@ public abstract class NodeProperty<T> {
      * for this property
      */
     protected Pane  GUIContent;
+    /**
+     * The GraphNode that this property belongs to
+     */
+    protected GraphNode parentNode;
 
     /**
-     * Construct a new NodeProperty
+     * Construct a new NodeProperty with the given parentNode
      */
-    public NodeProperty() {
+    public NodeProperty(GraphNode parent) {
         GUIContent = new Pane();
+        parentNode = parent;
     }
 
     /**

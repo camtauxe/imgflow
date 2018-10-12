@@ -133,6 +133,61 @@ public abstract class GraphNode {
     public int getNumOutputSockets() { return 1; }
 
     /**
+     * Process the image from the input(s) and write new image data
+     * to the output(s). This function should not be called directly and is
+     * instead called by the graph node's update() function which will gaurentee
+     * that before calling processImage(), that all inputs are up-to-date and that,
+     * after the function returns, all output sockets will be flagged as up-to-date.
+     * 
+     * By default, this does nothing so virtually every kind of node will want to override it.
+     */
+    protected void processImage() {}
+
+    /**
+     * Respond to a node property updating its value. By default, this will propagate
+     * an update through this node's output sockets. But some graph nodes
+     * may want to override this to do something else (for example, only update
+     * some outputs depending on the property that was updated).
+     */
+    public void onPropertyUpdate(NodeProperty<?> updatedProperty) {
+        for (NodeSocketOutput output : outputSockets) {
+            output.propagateUpdate();
+        }
+    }
+
+    /**
+     * Respond to an input socket updating its data (either by disconnecting, connecting
+     * or having its connected output socket update). By default, this will propagate
+     * an update through this node's output sockets. But some graph nodes may to want
+     * to override this to do something else (for example only update some outpus
+     * depending on the socket that was updated)
+     */
+    public void onInputUpdate(NodeSocketInput socket) {
+        for (NodeSocketOutput output : outputSockets) {
+            output.propagateUpdate();
+        }
+    }
+
+    /**
+     * Re-render this node to ensure that its outputs' image data
+     * is up-to-date. This will also update all up-stream nodes
+     * if necessary.
+     */
+    public void update() {
+        // Update all input sockets
+        for (NodeSocketInput input : inputSockets) {
+            input.requestUpdate();
+        }
+
+        processImage();
+
+        // Clear needsUpdate flag on output nodes
+        for (NodeSocketOutput output : outputSockets) {
+            output.setNeedsUpdate(false);
+        }
+    }
+
+    /**
      * Draw this node in the given viewport.
      * This assumes that the graphics context in the viewport
      * has already been transformed to graph space!!
@@ -180,8 +235,6 @@ public abstract class GraphNode {
         ctx.setStroke(Color.YELLOW);
         ctx.setLineWidth(viewport.pixelsToGraphUnits(2.5));
         for (NodeSocket socket : allSockets) {
-            // color depends on if socket is being hovered or not
-            // ctx.setFill(viewport.getHoverQuery().getHoveringSocket() == socket ? Color.ORANGE : Color.YELLOW);
             ctx.fillRect(socket.getPosition().getX(), socket.getPosition().getY(), NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
             // If the socket is an output socket with a connection, draw the connection line
             if (socket instanceof NodeSocketOutput) {
