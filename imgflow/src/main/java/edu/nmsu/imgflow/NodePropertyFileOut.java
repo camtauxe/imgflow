@@ -2,7 +2,6 @@ package edu.nmsu.imgflow;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
 import javafx.scene.image.WritableImage;
 import java.awt.image.RenderedImage;
@@ -46,7 +45,7 @@ public class NodePropertyFileOut extends NodeProperty<WritableImage> {
      */
     private void buildGUI() {
         vbox        = new VBox(5.0);
-        label       = new Label("File input");
+        label       = new Label("File output");
         saveButton  = new Button("Save");
 
         vbox.getChildren().addAll(label, saveButton);
