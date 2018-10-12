@@ -207,9 +207,9 @@ public class Viewport {
 
         // Draw connecting line if a connection is being drawn
         if (connectingSocket != null) {
-            ctx.setLineWidth(pixelsToGraphUnits(5.0));
-            ctx.setStroke(Color.RED);
-            Point2D fromPos = connectingSocket.getPosition().add(connectingSocket.getParentNode().getPosition());
+            ctx.setLineWidth(pixelsToGraphUnits(2.5));
+            ctx.setStroke(Color.ORANGE);
+            Point2D fromPos = connectingSocket.getConnectingPosition().add(connectingSocket.getParentNode().getPosition());
             ctx.strokeLine(fromPos.getX(), fromPos.getY(), connectingPoint.getX(), connectingPoint.getY());
         }
 
@@ -339,6 +339,7 @@ public class Viewport {
                 if (hoverQuery != HoverQuery.NO_HOVER) {
                     if (hoverQuery.isOverSocket()) {
                         connectingSocket = hoverQuery.getHoveringSocket();
+                        connectingSocket.disconnect();
                     }
                     if (hoverQuery.getHoveringNode() != selectedNode) {
                         selectedNode = hoverQuery.getHoveringNode();

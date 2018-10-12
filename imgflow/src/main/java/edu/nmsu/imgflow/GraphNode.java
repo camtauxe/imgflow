@@ -177,10 +177,23 @@ public abstract class GraphNode {
 
         // Draw sockets
         ctx.setFill(Color.YELLOW);
+        ctx.setStroke(Color.YELLOW);
+        ctx.setLineWidth(viewport.pixelsToGraphUnits(2.5));
         for (NodeSocket socket : allSockets) {
             // color depends on if socket is being hovered or not
             // ctx.setFill(viewport.getHoverQuery().getHoveringSocket() == socket ? Color.ORANGE : Color.YELLOW);
             ctx.fillRect(socket.getPosition().getX(), socket.getPosition().getY(), NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
+            // If the socket is an output socket with a connection, draw the connection line
+            if (socket instanceof NodeSocketOutput) {
+                NodeSocketOutput out = (NodeSocketOutput)socket;
+                NodeSocketInput  in  = out.getConnectingSocket();
+                if (in != null) {
+                    // Get position of other socket relative to this socket's parent node
+                    Point2D inPos = in.getParentNode().getPosition().subtract(position).add(in.getConnectingPosition());
+                    Point2D outPos = out.getConnectingPosition();
+                    ctx.strokeLine(outPos.getX(), outPos.getY(), inPos.getX(), inPos.getY());
+                } 
+            }
         }
 
         // Draw outline if node is being hovered over or selected

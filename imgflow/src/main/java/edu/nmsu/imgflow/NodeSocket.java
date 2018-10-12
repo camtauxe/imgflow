@@ -9,6 +9,10 @@ import javafx.geometry.Point2D;
  */
 public abstract class NodeSocket {
 
+    // ################################
+    // # INSTANCE VARIABLES
+    // ################################
+
     /**
      * The GraphNode that this socket belongs to
      */
@@ -28,12 +32,38 @@ public abstract class NodeSocket {
     protected Point2D position;
 
     /**
+     * The position a connector line touches on the socket when drawn on the viewport.
+     * (relative the the parent node's position, in graph units)
+     */
+    protected Point2D connectingPosition;
+
+    // ################################
+    // # CONSTRUCTOR
+    // ################################
+
+    /**
      * Create a new NodeSocket with the given parent and index
      */
     public NodeSocket(GraphNode parent, int index) {
         parentNode = parent;
         this.index = index;
     }
+
+    // ################################
+    // # PUBLIC METHODS
+    // ################################
+
+    public void connect(NodeSocket otherSocket) {
+        /** This should be overriden by a derived class */
+    }
+
+    public void disconnect() {
+        /** This should be overriden by a derived class */
+    }
+
+    // ################################
+    // # GETTERS/SETTERS
+    // ################################
 
     /**
      * Get the node that this socket belongs to
@@ -45,4 +75,10 @@ public abstract class NodeSocket {
      * the viewport (relative to the parent node's position, in graph units)
      */
     public Point2D getPosition() { return position; }
+
+    /**
+     * Get the position a connector line touches on the socket when drawn on the viewport.
+     * (relative the the parent node's position, in graph units)
+     */
+    public Point2D getConnectingPosition() { return connectingPosition; }
 }

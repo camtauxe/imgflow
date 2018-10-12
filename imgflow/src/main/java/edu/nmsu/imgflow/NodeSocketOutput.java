@@ -20,10 +20,46 @@ public class NodeSocketOutput extends NodeSocket {
     public NodeSocketOutput(GraphNode parent, int index) {
         super(parent, index);
 
+        // An output socket is drawn along the node's right edge
         position = new Point2D(
             GraphNode.NODE_WIDTH - GraphNode.NODE_SOCKET_SIZE,
             GraphNode.NODE_ROW_PADDING + ((index + 1) * GraphNode.NODE_ROW_HEIGHT)
         );
+        // The connecting position for an output node is along the socket's right edge
+        connectingPosition = position.add(GraphNode.NODE_SOCKET_SIZE, GraphNode.NODE_SOCKET_SIZE/2.0);
+    }
+
+    /**
+     * Connect this socket to the given socket.
+     * This will also call connect() on the other socket
+     */
+    public void connect(NodeSocket otherSocket) {
+        // If this socket is already connected to something, disconnect it
+        if (connectingSocket != null)
+            disconnect();
+        if (parentNode != otherSocket.getParentNode() && otherSocket instanceof NodeSocketInput) {
+            NodeSocketInput inputSocket = (NodeSocketInput)otherSocket;
+            connectingSocket = inputSocket;
+            // Re-connect the other socket if it hasn't been connected already
+            if (inputSocket.getConnectingSocket() != this)
+                inputSocket.connect(this);
+        }
+        // TODO: If unable to connect, generate some kind of error so the user knows why this failed
+    }
+
+    /**
+     * Disconnect this socket from the other socket if it is connected.
+     * This will also call disconnect() on the other socket
+     */
+    public void disconnect() {
+        // If the socket is already not connected to anything, no nothing
+        if (connectingSocket == null) return;
+
+        NodeSocketInput inputSocket = connectingSocket;
+        connectingSocket = null;
+        // Disconnect the other socket if it hasn't been disconnected already
+        if (inputSocket.getConnectingSocket() != null)
+            inputSocket.disconnect();
     }
 
     /**
@@ -32,9 +68,4 @@ public class NodeSocketOutput extends NodeSocket {
      */
     public NodeSocketInput getConnectingSocket() { return connectingSocket; }
 
-    /**
-     * Connect this socket to the given input socket.
-     * TODO: Check to make sure you aren't connecting to a socket on the same node
-     */
-    public void connect(NodeSocketInput inputSocket) { connectingSocket = inputSocket; }
 }
