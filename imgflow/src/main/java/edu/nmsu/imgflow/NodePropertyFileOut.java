@@ -54,14 +54,21 @@ public class NodePropertyFileOut extends NodeProperty<WritableImage> {
             GraphNodeFileOut node = (GraphNodeFileOut)parentNode;
             node.getInputSocket().requestUpdate();
             WritableImage img = node.getInputSocket().getImage();
-            RenderedImage rendered = SwingFXUtils.fromFXImage(img, null);
-            File file = chooser.showSaveDialog(Main.getInstance().getStage());
-            try {
-                ImageIO.write(rendered, "png", file);
-            } catch (IOException e) {
-                System.out.println("Error saving file!");
-                System.out.println(e.getMessage());
+            if (img == null) {
+                System.out.println("No input image available! Unable to save image!");
             }
+            else {
+                RenderedImage rendered = SwingFXUtils.fromFXImage(img, null);
+                File file = chooser.showSaveDialog(Main.getInstance().getStage());
+                try {
+                    ImageIO.write(rendered, "png", file);
+                    System.out.println("Succesfully saved image!");
+                } catch (IOException e) {
+                    System.out.println("Error saving file!");
+                    System.out.println(e.getMessage());
+                }
+            }
+
         });
 
         GUIContent = vbox;

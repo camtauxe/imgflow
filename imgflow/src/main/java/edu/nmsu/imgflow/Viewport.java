@@ -313,6 +313,10 @@ public class Viewport {
             // We only care about the left mouse button
             if (mouseEvent.getButton() != MouseButton.PRIMARY) return;
 
+            // Get the position of the mouse in graph units
+            Point2D pixelCoord = new Point2D(mouseEvent.getX(), mouseEvent.getY());
+            Point2D graphCoord = canvasCoordToGraphCoord(pixelCoord);
+
             // If drawing a connection, drop it if not over a socket,
             // or connect it if it is over another socket
             if (connectingSocket != null) {
@@ -339,10 +343,12 @@ public class Viewport {
                 if (hoverQuery != HoverQuery.NO_HOVER) {
                     if (hoverQuery.isOverSocket()) {
                         connectingSocket = hoverQuery.getHoveringSocket();
+                        connectingPoint = graphCoord;
                         connectingSocket.disconnect();
                     }
                     if (hoverQuery.getHoveringNode() != selectedNode) {
                         selectedNode = hoverQuery.getHoveringNode();
+                        redraw();
                         for (NodeSelectListener listener : nodeSelectListeners)
                             listener.handle(selectedNode);
                     }

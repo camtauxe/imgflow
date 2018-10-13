@@ -55,6 +55,7 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
                 if (img.isError())
                     throw img.getException();
                 value = new WritableImage(img.getPixelReader(), (int)img.getWidth(), (int)img.getHeight());
+                System.out.println("Successfully loaded image!");
             } catch (Exception e) {
                 System.out.println("Error loading image!");
                 System.out.println(e.getClass() + " : " + e.getMessage());

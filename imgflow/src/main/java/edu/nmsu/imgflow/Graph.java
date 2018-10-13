@@ -32,7 +32,8 @@ public class Graph {
         GraphNode in = new GraphNodeFileIn();
         GraphNode out = new GraphNodeFileOut();
 
-        out.setPosition(new Point2D(2.0, 1.0));
+        in.setPosition(new Point2D(-1.3, -1.0));
+        out.setPosition(new Point2D(1.25, 0.8));
 
         graph.getNodes().add(in);
         graph.getNodes().add(out);
