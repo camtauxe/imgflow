@@ -24,19 +24,21 @@ public class Graph {
     }
 
     /**
-     * Create and return a new graph with some test nodes already on it.
+     * Create and return a new graph with some basic nodes already on it
      */
     public static Graph buildTestGraph() {
         Graph graph = new Graph();
 
         GraphNode in = new GraphNodeFileIn();
         GraphNode out = new GraphNodeFileOut();
+        GraphNode invert = new GraphNodeInvert();
 
-        in.setPosition(new Point2D(-1.3, -1.0));
-        out.setPosition(new Point2D(1.25, 0.8));
+        in.setPosition(new Point2D(-2.3, -0.3));
+        out.setPosition(new Point2D(2.2, 0.3));
 
         graph.getNodes().add(in);
         graph.getNodes().add(out);
+        graph.getNodes().add(invert);
 
         return graph;
     }

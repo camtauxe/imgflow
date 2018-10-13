@@ -63,7 +63,7 @@ public class NodePropertyFileOut extends NodeProperty<WritableImage> {
                 try {
                     ImageIO.write(rendered, "png", file);
                     System.out.println("Succesfully saved image!");
-                } catch (IOException e) {
+                } catch (Exception e) {
                     System.out.println("Error saving file!");
                     System.out.println(e.getMessage());
                 }
