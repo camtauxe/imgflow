@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import java.io.IOException;
 import javafx.embed.swing.SwingFXUtils;
 
 /**
