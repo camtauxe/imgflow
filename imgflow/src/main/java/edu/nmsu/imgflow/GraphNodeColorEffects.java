@@ -18,9 +18,9 @@ public class GraphNodeColorEffects extends GraphNode {
     private NodeSocketOutput out;
 
     public GraphNodeColorEffects() {
-        hueSlider = new NodePropertySlider(this, "Hue", 0, 100, 0);
-        saturationSlider = new NodePropertySlider(this, "Saturation", -100, 100, 0);
-        brightnessSlider = new NodePropertySlider(this, "Brightness", -100, 100, 0);
+        hueSlider           = new NodePropertySlider(this, "Hue",               0, 255, 0);
+        saturationSlider    = new NodePropertySlider(this, "Saturation (%)",    0, 250, 100);
+        brightnessSlider    = new NodePropertySlider(this, "Brightness (%)",    0, 250, 100);
 
         properties.add(hueSlider);
         properties.add(saturationSlider);
@@ -52,18 +52,17 @@ public class GraphNodeColorEffects extends GraphNode {
         WritableImage   outImg = new WritableImage(width, height);
         PixelWriter     writer = outImg.getPixelWriter();
 
-        //Iterate through and change the node color
-        // 
-        //deriveColor affects hue is on a scale from 0 - 350 
-        //and saturation and brightness on a scale from 0 - 2.
-        //This node doesn't affect opacity, therefore defaults to 100
+        //Iterate through pixels and adjust color
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Color inColor = reader.getColor(x, y);
-                writer.setColor(x, y, inColor.deriveColor( hueSlider.getValue() * 3.5
-                                                           ,(saturationSlider.getValue() / 100) + 1
-                                                           ,(brightnessSlider.getValue() / 100) + 1
-                                                           ,100));
+                Color outColor = inColor.deriveColor(
+                    hueSlider.getValue(),                   // hue shift
+                    saturationSlider.getValue() / 100.0,    // saturation factor
+                    brightnessSlider.getValue() / 100.0,    // brightness factor
+                    1.0 // preserve opacity
+                );
+                writer.setColor(x, y, outColor);
 
             }
         }

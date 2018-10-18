@@ -31,7 +31,7 @@ public class NodePropertySlider extends NodeProperty<Integer> {
     /**
      * The default/starting value of the slider
      */
-    private int     sliderDefaultValue;
+    private int     sliderDefault;
 
     /**
      * Create a new NodePropertySlider with the given parent node, min, max and name.
@@ -41,12 +41,16 @@ public class NodePropertySlider extends NodeProperty<Integer> {
         this.name = name;
         sliderMin = min;
         sliderMax = max;
-        if(sliderDefaultValue <= sliderMax && sliderDefaultValue >= sliderMin)
-            sliderDefaultValue = defaultValue;
-        else if(sliderDefaultValue < sliderMin)
-            sliderDefaultValue = sliderMin;
+
+        // Clamp default value to be within min and max
+        if(sliderDefault <= sliderMax && sliderDefault >= sliderMin)
+            sliderDefault = defaultValue;
+        else if(sliderDefault < sliderMin)
+            sliderDefault = sliderMin;
         else
-            sliderDefaultValue = sliderMax;
+            sliderDefault = sliderMax;
+
+        value = sliderDefault;
 
         buildGUI();
     }
@@ -57,8 +61,8 @@ public class NodePropertySlider extends NodeProperty<Integer> {
     private void buildGUI() {
         // Instantiate components
         vbox    = new VBox(5.0);
-        label   = new Label(name + ": " + sliderDefaultValue);
-        slider  = new Slider(sliderMin, sliderMax, sliderDefaultValue);
+        label   = new Label(name + ": " + sliderDefault);
+        slider  = new Slider(sliderMin, sliderMax, sliderDefault);
 
         // Add label and slider
         vbox.getChildren().add(label);
@@ -68,6 +72,7 @@ public class NodePropertySlider extends NodeProperty<Integer> {
         slider.valueProperty().addListener((oldVal, newVal, obs) -> {
             label.setText(name + ": " + newVal.intValue());
             value = newVal.intValue();
+            parentNode.onPropertyUpdate(this);
         });
 
         GUIContent = vbox;

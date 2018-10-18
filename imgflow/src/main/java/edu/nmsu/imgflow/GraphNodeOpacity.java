@@ -17,7 +17,7 @@ public class GraphNodeOpacity extends GraphNode {
     private NodeSocketOutput out;
 
     public GraphNodeOpacity() {
-        opacitySlider = new NodePropertySlider(this, "Opacity", 0, 100, 100);
+        opacitySlider = new NodePropertySlider(this, "Opacity (%)", 0, 100, 100);
 
         properties.add(opacitySlider);
 
@@ -47,15 +47,13 @@ public class GraphNodeOpacity extends GraphNode {
         WritableImage   outImg = new WritableImage(width, height);
         PixelWriter     writer = outImg.getPixelWriter();
 
-        //Iterate through and change the node color
-        // 
-        //This node doesn't affect anything other than opacity
-        //and therefore defaults everything else to maintain
-        //the original image
+        //Iterate through pixels and adjust color
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Color inColor = reader.getColor(x, y);
-                writer.setColor(x, y, inColor.deriveColor(0, 1, 1, opacitySlider.getValue()));
+                // Use deriveColor() preserving hue saturation and brightness
+                Color outColor = inColor.deriveColor(0, 1.0, 1.0, opacitySlider.getValue() / 100.0);
+                writer.setColor(x, y, outColor);
 
             }
         }
