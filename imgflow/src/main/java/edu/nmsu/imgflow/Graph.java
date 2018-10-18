@@ -31,14 +31,14 @@ public class Graph {
 
         GraphNode in = new GraphNodeFileIn();
         GraphNode out = new GraphNodeFileOut();
-        GraphNode invert = new GraphNodeInvert();
+        GraphNode colorEffectsTest = new GraphNodeColorEffects();
 
         in.setPosition(new Point2D(-2.3, -0.3));
         out.setPosition(new Point2D(2.2, 0.3));
 
         graph.getNodes().add(in);
         graph.getNodes().add(out);
-        graph.getNodes().add(invert);
+        graph.getNodes().add(colorEffectsTest);
 
         return graph;
     }
