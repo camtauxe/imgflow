@@ -28,15 +28,29 @@ public class NodePropertySlider extends NodeProperty<Integer> {
      * The maximum value the slider will allow
      */
     private int     sliderMax;
+    /**
+     * The default/starting value of the slider
+     */
+    private int     sliderDefault;
 
     /**
      * Create a new NodePropertySlider with the given parent node, min, max and name.
      */
-    public NodePropertySlider(GraphNode parent, String name, int min, int max) {
+    public NodePropertySlider(GraphNode parent, String name, int min, int max, int defaultValue) {
         super(parent);
         this.name = name;
         sliderMin = min;
         sliderMax = max;
+
+        // Clamp default value to be within min and max
+        if(sliderDefault <= sliderMax && sliderDefault >= sliderMin)
+            sliderDefault = defaultValue;
+        else if(sliderDefault < sliderMin)
+            sliderDefault = sliderMin;
+        else
+            sliderDefault = sliderMax;
+
+        value = sliderDefault;
 
         buildGUI();
     }
@@ -47,8 +61,8 @@ public class NodePropertySlider extends NodeProperty<Integer> {
     private void buildGUI() {
         // Instantiate components
         vbox    = new VBox(5.0);
-        label   = new Label(name + ": " + sliderMin);
-        slider  = new Slider(sliderMin, sliderMax, sliderMin);
+        label   = new Label(name + ": " + sliderDefault);
+        slider  = new Slider(sliderMin, sliderMax, sliderDefault);
 
         // Add label and slider
         vbox.getChildren().add(label);
@@ -58,6 +72,7 @@ public class NodePropertySlider extends NodeProperty<Integer> {
         slider.valueProperty().addListener((oldVal, newVal, obs) -> {
             label.setText(name + ": " + newVal.intValue());
             value = newVal.intValue();
+            parentNode.onPropertyUpdate(this);
         });
 
         GUIContent = vbox;
