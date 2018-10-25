@@ -18,6 +18,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.scene.input.MouseButton;
 import javafx.scene.Cursor;
 
+import javafx.animation.AnimationTimer;
+
 /**
  * Represents a view of a graph on a canvas, allowing the user to view a graph,
  * select and move nodes and make/delete connections.
@@ -117,6 +119,12 @@ public class Viewport {
      */
     private Point2D connectingPoint;
 
+    /**
+     * The RedrawTimer that controls redrawing the canvas at
+     * set intervals
+     */
+    private RedrawTimer timer;
+
 
     /**
      * The JavaFX GridPane containing the canvas and other controls
@@ -140,6 +148,10 @@ public class Viewport {
         prevHoverQuery = HoverQuery.NO_HOVER;
         hoverQuery = HoverQuery.NO_HOVER;
         buildPane();
+
+        // Create and start timer
+        timer = new RedrawTimer();
+        timer.start();
     }
 
     /**
@@ -256,16 +268,14 @@ public class Viewport {
                 else
                     Main.getInstance().getScene().setCursor(Cursor.DEFAULT);
             }
-            // If a connection is being drawn, update connectingPoint and redraw
+            // If a connection is being drawn, update connectingPoint
             else {
                 connectingPoint = graphCoord;
-                redraw();
             }
 
-            // If the hoveringNode has changed from the last mouse event, redraw
+            // If the hoveringNode has changed from the last mouse event, update
             if (hoverQuery.getHoveringNode() != prevHoverQuery.getHoveringNode()) {
                 prevHoverQuery = hoverQuery;
-                redraw();
             }
         });
 
@@ -299,12 +309,10 @@ public class Viewport {
             // If dragging a node, adjust the position of that node
             if (draggingNode != null) {
                 draggingNode.setPosition(graphCoord.subtract(draggingNodeOffset));
-                redraw();
             }
             // If panning the view, adjust the viewport center position
             else if (dragAnchor != null) {
                 viewportCenter = viewportCenter.subtract(graphCoord.subtract(dragAnchor));
-                redraw();
             }
         });
 
@@ -335,7 +343,6 @@ public class Viewport {
                 }
                 connectingSocket = null;
                 connectingPoint = null;
-                redraw();
             }
             else {
                 // If a node is being hovered over, select it (if it isn't already selected)
@@ -348,7 +355,6 @@ public class Viewport {
                     }
                     if (hoverQuery.getHoveringNode() != selectedNode) {
                         selectedNode = hoverQuery.getHoveringNode();
-                        redraw();
                         for (NodeSelectListener listener : nodeSelectListeners)
                             listener.handle(selectedNode);
                     }
@@ -356,7 +362,6 @@ public class Viewport {
                 // If no node is being hovered over, deselect if one is selected
                 else if (selectedNode != null) {
                     selectedNode = null;
-                    redraw();
                     for (NodeSelectListener listener : nodeSelectListeners)
                         listener.handle(null);
                 }
@@ -375,8 +380,6 @@ public class Viewport {
             viewportZoom = newZoom;
 
             // TODO: Adjust viewportCenter so that zoom occurs centered around mouse location
-
-            redraw();
         });
     }
 
@@ -537,4 +540,17 @@ public class Viewport {
      */
     public GraphNode getSelectedNode() { return selectedNode; }
 
+    // ################################
+    // # SUBCLASSES
+    // ################################
+
+    /**
+     * An extension of the JavaFX AnimationTimer set to redraw
+     * the viewport canvas at 60fps
+     */
+    private class RedrawTimer extends AnimationTimer {
+        public void handle(long now) {
+            redraw();
+        }
+    }
 }
