@@ -7,15 +7,16 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.PixelReader;
 
 /**
- * Splits image into RGB color channels. Currently splits the input image into three
- * based which contain the individual R, G, or B color values of each respectively.
+ * Splits image into RGB color channels. Takes a single input image and outputs
+ * three grayscale images each representing the values of one of the input's RGB channels.
  */
 public class GraphNodeSplitColor extends GraphNode {
 
+    // References to sockets
     private NodeSocketInput in;
-    private NodeSocketOutput outR; //output for red color channel
-    private NodeSocketOutput outG; //output for green color channel
-    private NodeSocketOutput outB; //output for blue color channel
+    private NodeSocketOutput outR;
+    private NodeSocketOutput outG;
+    private NodeSocketOutput outB;
     
     public GraphNodeSplitColor() {
         in  = inputSockets.get(0);
@@ -24,49 +25,49 @@ public class GraphNodeSplitColor extends GraphNode {
         outB = outputSockets.get(2);
     }
     
-    public String getName() { return "Color Split"; }
+    public String getName() { return "Split RGB"; }
     
     /**
      * Override processImage to split the colors of the input image
-     * and send it to the corrisponding outputs.
+     * and send it to the corresponding outputs.
      */
     public void processImage() {
       // Get input image information
       Image inImg = in.getImage();
-      // error case: no input image, clear output and finish
+      // if there is no input image, clear output and finish
       if(inImg == null) {
          outR.setImage(null);
          outG.setImage(null);
          outB.setImage(null);
          return;
       }
-      int width = (int)inImg.getWidth();
+      int width =  (int)inImg.getWidth();
       int height = (int)inImg.getHeight();
       PixelReader reader = inImg.getPixelReader();
 
-      // Create new writable images for the output
+      // Create new writable images for each output
       WritableImage rImg = new WritableImage(width, height);
       WritableImage gImg = new WritableImage(width, height);
       WritableImage bImg = new WritableImage(width, height);
       
-      PixelWriter rWriter = rImg.getPixelWriter(); //red pixelwriter
-      PixelWriter gWriter = gImg.getPixelWriter(); //green pixelwriter
-      PixelWriter bWriter = bImg.getPixelWriter(); //blue pixelwriter
+      PixelWriter rWriter = rImg.getPixelWriter();
+      PixelWriter gWriter = gImg.getPixelWriter();
+      PixelWriter bWriter = bImg.getPixelWriter();
 
       // Iterate through pixels and get RGB color values
       for(int x = 0; x < width; x++) {
          for(int y = 0; y < height; y++) {
             Color inColor = reader.getColor(x, y); //read in color
             
-            double redVal   = inColor.getRed();     //get red value of color
-            double greenVal = inColor.getGreen();   //get green value
-            double blueVal  = inColor.getBlue();    //get blue value
-            double opacity  = inColor.getOpacity(); //get opacity
+            double redVal   = inColor.getRed();
+            double greenVal = inColor.getGreen();
+            double blueVal  = inColor.getBlue();
+            double opacity  = inColor.getOpacity();
             
-            //create grayscale equivalent of each color concentration
-            Color redOut   = new Color(redVal,     redVal,   redVal, opacity);  
-            Color greenOut = new Color(greenVal, greenVal, greenVal, opacity);
-            Color blueOut  = new Color(blueVal,   blueVal,  blueVal, opacity);
+            //create grayscale equivalent of each color value
+            Color redOut   = new Color(redVal,      redVal,     redVal,     opacity);  
+            Color greenOut = new Color(greenVal,    greenVal,   greenVal,   opacity);
+            Color blueOut  = new Color(blueVal,     blueVal,    blueVal,    opacity);
             
             //output to each pixelwriter
             rWriter.setColor(x, y, redOut);
