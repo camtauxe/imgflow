@@ -7,15 +7,31 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+
+
+import javafx.scene.layout.VBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+
+import javafx.scene.control.TextField;
+
+
 /**
  * Represents a single node on the image pipeline graph.
- * 
+ *
  * Each node has a number of input and output sockets and performs some function
  * mapping image data on the inputs to image data sent to the outputs. Each node also
  * maintains its position on the node graph view and has a name and a base name
  * which is different.
- * 
- * The base name identifies the type of the node 
+ *
+ * The base name identifies the type of the node
  * (and is set for an entire subclass of GraphNode) while the name identifies an individual
  * node and is set by the user. For example: A type of node that performs a Gaussian Blur on its input
  * would have a base name of "Gaussian Blur" while individual nodes on the graph may have names like
@@ -81,7 +97,7 @@ public abstract class GraphNode {
     /**
      * Create a new GraphNode at position (0,0)
      * and with a default name equivalent to its base name.
-     * 
+     *
      * GraphNode is abstract so this can not be called directly, and must
      * be called as 'super()' in the constructor of a subclass.
      */
@@ -138,7 +154,7 @@ public abstract class GraphNode {
      * instead called by the graph node's update() function which will gaurentee
      * that before calling processImage(), that all inputs are up-to-date and that,
      * after the function returns, all output sockets will be flagged as up-to-date.
-     * 
+     *
      * By default, this does nothing so virtually every kind of node will want to override it.
      */
     protected void processImage() {}
@@ -245,7 +261,7 @@ public abstract class GraphNode {
                     Point2D inPos = in.getParentNode().getPosition().subtract(position).add(in.getConnectingPosition());
                     Point2D outPos = out.getConnectingPosition();
                     ctx.strokeLine(outPos.getX(), outPos.getY(), inPos.getX(), inPos.getY());
-                } 
+                }
             }
         }
 
@@ -259,6 +275,48 @@ public abstract class GraphNode {
 
         // return drawing relative to graph origin (in graph units)
         ctx.restore();
+    }
+
+    /**
+    * Change the name of the Node.
+    * Just add the button to any subclass, and allow the
+    * name to be changed.
+    */
+    public void changeNodeName() {
+
+      Stage popup = new Stage();
+      popup.setTitle("Change Node Name");
+
+      Label label = new Label("Enter New Name.");
+      Button button = new Button("Set");
+      TextField tf = new TextField();
+
+      tf.setPromptText("Enter name:");
+
+      // When the button is pressed
+      // Change the name of this node
+      button.setOnAction((actionEvent) -> {
+
+          // Should prompt the user here
+          // if the text field is empty
+          // for now, just don't change the name
+          if(tf.getText().isEmpty()) {
+            System.out.println("There was no text, not changing name");
+          }
+          else {
+            this.setName(tf.getText());
+          }
+
+          popup.close();
+      });
+
+      VBox layout = new VBox(10);
+      layout.getChildren().addAll(label,tf,button);
+      Scene scene = new Scene(layout,300,300);
+      popup.setScene(scene);
+      popup.showAndWait();
+
+
     }
 
     // ################################

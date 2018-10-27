@@ -8,6 +8,8 @@ import javafx.scene.image.WritableImage;
 import java.io.File;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
 
 /**
  * The NodePropertyFileIn is a kind of NodeProperty that reads
@@ -19,7 +21,11 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
     private VBox        vbox;
     private Label       label;
     private Button      loadButton;
-    
+
+    //private VBox        vvbox;
+    //private Label       labell;
+    private Button      changeNameButton;
+
     private FileChooser chooser;
 
     /**
@@ -41,11 +47,13 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
      * Build the property's GUI content
      */
     private void buildGUI() {
-        vbox        = new VBox(5.0);
-        label       = new Label("File input");
-        loadButton  = new Button("Load");
+        vbox                   = new VBox(5.0);
+        label                  = new Label("File input");
+        loadButton             = new Button("Load");
+        changeNameButton       = new Button("Change Node Name");
 
-        vbox.getChildren().addAll(label, loadButton);
+        vbox.getChildren().addAll(label,loadButton,changeNameButton);
+
 
         loadButton.setOnAction((actionEvent) -> {
             try {
@@ -58,6 +66,18 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
                 System.out.println("Successfully loaded image!");
             } catch (Exception e) {
                 System.out.println("Error loading image!");
+                System.out.println(e.getClass() + " : " + e.getMessage());
+                value = null;
+            } finally {
+                parentNode.onPropertyUpdate(this);
+            }
+        });
+
+        changeNameButton.setOnAction((actionEvent) -> {
+            try {
+                parentNode.changeNodeName();
+            } catch (Exception e) {
+                System.out.println("Error ");
                 System.out.println(e.getClass() + " : " + e.getMessage());
                 value = null;
             } finally {
