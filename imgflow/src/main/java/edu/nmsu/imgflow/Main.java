@@ -1,8 +1,16 @@
 package edu.nmsu.imgflow;
-// test
+
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.Priority;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 
 /**
  * Main class for the Imgflow application
@@ -46,6 +54,12 @@ public class Main extends Application {
      */
     private Scene scene;
 
+    /**
+     * The graph that is currently being "worked on" (i.e. displayed
+     * and editable in the viewport)
+     */
+    private Graph activeGraph;
+
     // ################################
     // # METHODS
     // ################################
@@ -72,9 +86,9 @@ public class Main extends Application {
         instance = this;
         stage = s;
 
-        // Build scene with the result of 'GUIBuilder.createMainWindow()' as
+        // Build scene with the result of createMainWindow() as
         // the root node, and add to stage.
-        scene = new Scene(GUIBuilder.createMainWindow());
+        scene = new Scene(createMainWindow());
         stage.setScene(scene);
 
         // Set sizing for stage
@@ -85,6 +99,73 @@ public class Main extends Application {
 
         // Show window
         stage.show();
+    }
+
+    /**
+     * Create a JavaFX Pane representing the top-level of the application GUI.
+     * This should be the root node of the main scene.
+     * 
+     * The Pane is a GridPane with 2 columns and two rows.
+     * The top row spans both columns and contains the MenuBar while the second row is split
+     * into the two columns. The right-most column is of a fixed-width
+     * while the left-most column grows to fill the remaining space. The left column contains
+     * an instance of Viewport (referring to a new Graph instance) while the right column
+     * contains the property panel whose contents change depending on the selected node.
+     * 
+     * @return The created JavaFX Pane
+     */
+    private Pane createMainWindow() {
+
+        GridPane pane = new GridPane();
+
+        pane.setGridLinesVisible(true); // For debug, disable this for release
+
+        // Set column contraints
+        // First column grows to fill available space
+        ColumnConstraints column1 = new ColumnConstraints();
+        column1.setHgrow(Priority.ALWAYS);
+        // Second column is of a fixed width (in pixels)
+        ColumnConstraints column2 = new ColumnConstraints();
+        column2.setPrefWidth(300.0);
+        pane.getColumnConstraints().addAll(column1, column2);
+
+        // Set row constraints
+        RowConstraints row1 = new RowConstraints();
+        // Second row grows to fill available space
+        RowConstraints row2 = new RowConstraints();
+        row2.setVgrow(Priority.ALWAYS);
+        pane.getRowConstraints().addAll(row1, row2);
+
+        // Create MenuBar
+        MenuBar menuBar = new MenuBar();
+        // Create "File" Menu
+        Menu fileMenu = new Menu("File");
+        // Add dummy menu items
+        MenuItem save = new MenuItem("Save Graph");
+        MenuItem load = new MenuItem("Load Graph");
+        fileMenu.getItems().addAll(save, load);
+        // Add node creation menu
+        Menu createMenu = NodeFactory.buildNodeCreationMenu();
+        // Add menus to menu bar
+        menuBar.getMenus().addAll(fileMenu, createMenu);
+        pane.add(menuBar, 0, 0, 2, 1);
+
+        // Create viewport and add to first row, first column
+        activeGraph = new Graph();
+        Viewport viewport = new Viewport(activeGraph);
+        pane.add(viewport.getPane(), 0, 1);
+
+        // Create Property Panel and add to first row, second column
+        PropertyPanel propertyPanel = new PropertyPanel();
+        pane.add(propertyPanel.getPane(), 1, 1);
+
+        // Update contents of property panel when the selection
+        // in the viewport changes
+        viewport.addNodeSelectListener((node) -> {
+            propertyPanel.updateSelectedNode(node);
+        });
+
+        return pane;
     }
 
     // ################################
@@ -104,4 +185,9 @@ public class Main extends Application {
      * Get the JavaFX scene
      */
     public Scene getScene() { return scene; }
+
+    /**
+     * Get the Graph that is currently being worked on.
+     */
+    public Graph getActiveGraph() { return activeGraph; }
 }
