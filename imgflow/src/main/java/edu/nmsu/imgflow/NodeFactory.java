@@ -22,6 +22,8 @@ public abstract class NodeFactory {
             case "invert":          return new GraphNodeInvert();
             case "coloreffects":    return new GraphNodeColorEffects();
             case "opacity":         return new GraphNodeOpacity();
+            case "splitcolor":      return new GraphNodeSplitColor();
+            case "joincolor":       return new GraphNodeJoinColor();
             default: return null;
         }
     }
@@ -38,7 +40,9 @@ public abstract class NodeFactory {
             buildNodeMenuItem("fileout",        "File OUT"),
             buildNodeMenuItem("invert",         "Invert Colors"),
             buildNodeMenuItem("coloreffects",   "Color Effects"),
-            buildNodeMenuItem("opacity",        "Opacity")
+            buildNodeMenuItem("opacity",        "Opacity"),
+            buildNodeMenuItem("splitcolor",     "Split RGB"),
+            buildNodeMenuItem("joincolor",      "Join RBG")
         );
 
         return menu;
