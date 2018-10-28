@@ -69,7 +69,7 @@ public class NodePropertySlider extends NodeProperty<Integer> {
         vbox.getChildren().add(slider);
 
         // Add listener to slider to update value and change text on label
-        slider.valueProperty().addListener((oldVal, newVal, obs) -> {
+        slider.valueProperty().addListener((obs, oldVal, newVal) -> {
             label.setText(name + ": " + newVal.intValue());
             value = newVal.intValue();
             parentNode.onPropertyUpdate(this);
