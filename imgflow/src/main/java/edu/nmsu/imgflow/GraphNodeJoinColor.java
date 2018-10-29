@@ -25,7 +25,7 @@ public class GraphNodeJoinColor extends GraphNode {
         out = outputSockets.get(0);
     }
 
-    public String getName() { return "Join RGB"; }
+    public String getBaseName() { return "Join RGB"; }
     
     /**
      * Override processImage to join the colors of the input images
