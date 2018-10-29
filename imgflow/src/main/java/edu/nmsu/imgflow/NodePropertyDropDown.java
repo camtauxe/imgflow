@@ -51,7 +51,7 @@ public class NodePropertyDropDown extends NodeProperty<String> {
         menu.getItems().addAll(options);
         menu.getSelectionModel().select(0);
 
-        // Add label and slider
+        // Add label and combo box
         vbox.getChildren().add(label);
         vbox.getChildren().add(menu);
 

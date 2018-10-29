@@ -41,7 +41,7 @@ public class NodePropertyText extends NodeProperty<String> {
         label   = new Label(name);
         field   = new TextField(value);
 
-        // Add label and slider
+        // Add label and text field
         vbox.getChildren().add(label);
         vbox.getChildren().add(field);
 
