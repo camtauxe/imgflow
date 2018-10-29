@@ -203,6 +203,15 @@ public abstract class GraphNode {
     }
 
     /**
+     * Disconnect all of this node's sockets from their attached
+     * sockets.
+     */
+    public void disconnectAllSockets() {
+        for (NodeSocket socket : allSockets)
+            socket.disconnect();
+    }
+
+    /**
      * Draw this node in the given viewport.
      * This assumes that the graphics context in the viewport
      * has already been transformed to graph space!!
