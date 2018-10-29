@@ -25,7 +25,7 @@ public class GraphNodeSplitColor extends GraphNode {
         outB = outputSockets.get(2);
     }
     
-    public String getName() { return "Split RGB"; }
+    public String getBaseName() { return "Split RGB"; }
     
     /**
      * Override processImage to split the colors of the input image
