@@ -60,6 +60,11 @@ public abstract class GraphNode {
     protected ArrayList<NodeProperty<?>> properties;
 
     /**
+     * A text node property for this node's name
+     */
+    protected NodePropertyText nameProperty;
+
+    /**
      * The list of all of this node's input sockets
      */
     protected ArrayList<NodeSocketInput> inputSockets;
@@ -93,6 +98,10 @@ public abstract class GraphNode {
         inputSockets    = new ArrayList<NodeSocketInput>();
         outputSockets   = new ArrayList<NodeSocketOutput>();
         allSockets      = new ArrayList<NodeSocket>();
+
+        // Instantiate and add name property
+        nameProperty    = new NodePropertyText(this, "Name", name);
+        properties.add(nameProperty);
 
         // Instantiate all input and output sockets
         int numInputs = getNumInputSockets();
@@ -145,13 +154,19 @@ public abstract class GraphNode {
 
     /**
      * Respond to a node property updating its value. By default, this will propagate
-     * an update through this node's output sockets. But some graph nodes
+     * an update through this node's output sockets, unless the changed property
+     * is the name property in which case the node changes its name. Some graph nodes
      * may want to override this to do something else (for example, only update
      * some outputs depending on the property that was updated).
      */
     public void onPropertyUpdate(NodeProperty<?> updatedProperty) {
-        for (NodeSocketOutput output : outputSockets) {
-            output.propagateUpdate();
+        if (updatedProperty == nameProperty) {
+            name = nameProperty.getValue();
+        }
+        else {
+            for (NodeSocketOutput output : outputSockets) {
+                output.propagateUpdate();
+            }
         }
     }
 
@@ -185,6 +200,15 @@ public abstract class GraphNode {
         for (NodeSocketOutput output : outputSockets) {
             output.setNeedsUpdate(false);
         }
+    }
+
+    /**
+     * Disconnect all of this node's sockets from their attached
+     * sockets.
+     */
+    public void disconnectAllSockets() {
+        for (NodeSocket socket : allSockets)
+            socket.disconnect();
     }
 
     /**
