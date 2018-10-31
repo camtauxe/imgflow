@@ -56,9 +56,19 @@ public class Main extends Application {
 
     /**
      * The graph that is currently being "worked on" (i.e. displayed
-     * and editable in the viewport)
+     * and editable in the viewport and property panel)
      */
     private Graph activeGraph;
+
+    /**
+     * The active viewport
+     */
+    private Viewport viewport;
+
+    /**
+     * The active property panel
+     */
+    private PropertyPanel propertyPanel;
 
     // ################################
     // # METHODS
@@ -152,16 +162,16 @@ public class Main extends Application {
 
         // Create viewport and add to first row, first column
         activeGraph = new Graph();
-        Viewport viewport = new Viewport(activeGraph);
+        viewport = new Viewport(activeGraph);
         pane.add(viewport.getPane(), 0, 1);
 
         // Create Property Panel and add to first row, second column
-        PropertyPanel propertyPanel = new PropertyPanel();
+        propertyPanel = new PropertyPanel();
         pane.add(propertyPanel.getPane(), 1, 1);
 
         // Update contents of property panel when the selection
         // in the viewport changes
-        viewport.addNodeSelectListener((node) -> {
+        activeGraph.addNodeSelectListener((node) -> {
             propertyPanel.updateSelectedNode(node);
         });
 
@@ -190,4 +200,14 @@ public class Main extends Application {
      * Get the Graph that is currently being worked on.
      */
     public Graph getActiveGraph() { return activeGraph; }
+
+    /**
+     * Get the active viewport
+     */
+    public Viewport getViewport() { return viewport; }
+
+    /**
+     * Get the active property panel
+     */
+    public PropertyPanel getPropertyPanel() { return propertyPanel; }
 }

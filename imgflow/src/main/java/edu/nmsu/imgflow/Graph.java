@@ -17,10 +17,22 @@ public class Graph {
     private ArrayList<GraphNode> nodes;
 
     /**
+     * The node that is currently selected, or null if no node is selected
+     */
+    private GraphNode selectedNode;
+
+    /**
+     * The list of registered node selection listeners, triggered
+     * when the selection changes.
+     */
+    private ArrayList<NodeSelectListener> nodeSelectListeners;
+
+    /**
      * Create a new, empty graph
      */
     public Graph() {
         nodes = new ArrayList<GraphNode>();
+        nodeSelectListeners = new ArrayList<NodeSelectListener>();
     }
 
     /**
@@ -49,6 +61,42 @@ public class Graph {
 
         return graph;
     }
+
+    /**
+     * Change the graph's selected node to the given node.
+     * Give 'null' to deselect the currently selected node.
+     * If the given node is already selected or is not in the
+     * graph, this does nothing.
+     */
+    public void selectNode(GraphNode node) {
+        if (selectedNode == node) { return; }
+
+        if (node == null) {
+            selectedNode = null;
+            for (NodeSelectListener listener : nodeSelectListeners)
+                listener.handle(selectedNode);
+        }
+        else if (nodes.contains(node)) {
+            selectedNode = node;
+            for (NodeSelectListener listener : nodeSelectListeners)
+                listener.handle(selectedNode);
+        }
+    }
+
+    /**
+     * Add a node select listener to this viewport. It will be invoked
+     * whenever the selected node changes (this includes when a node
+     * is deselected)
+     */
+    public void addNodeSelectListener(NodeSelectListener listener) {
+        nodeSelectListeners.add(listener);
+    }
+
+    /**
+     * Get the currently selected node, or null if no node
+     * in the graph is selected
+     */
+    public GraphNode getSelectedNode() { return selectedNode;}
 
     /**
      * Get the list of nodes in the graph
