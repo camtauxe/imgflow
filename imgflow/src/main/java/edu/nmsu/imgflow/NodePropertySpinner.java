@@ -35,6 +35,11 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
     private int     spinnerInitialValue;
 
     /**
+     * The last acceptable value. Used to revert to when an invalid value is entered.
+     */
+    private int     previousValue;
+
+    /**
      * Create a new NodePropertySpinner with the given parent node, min, max and name.
      */
     public NodePropertySpinner(GraphNode parent, String name, int min, int max, int defaultValue) {
@@ -52,6 +57,7 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
             spinnerInitialValue = spinnerMax;
 
         value = spinnerInitialValue;
+        previousValue = spinnerInitialValue;
 
         buildGUI();
     }
@@ -66,24 +72,24 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
         IntegerSpinnerValueFactory valueFactory = new IntegerSpinnerValueFactory(spinnerMin, spinnerMax, spinnerInitialValue);
         spinner  = new Spinner<Integer>(valueFactory);
 
-        spinner.setEditable(true);
+        // This causes a lot of problems if somone enters a non-number into the spinner and it's
+        // very difficult to fix, so for now, we'll just disable it
+        //spinner.setEditable(true);
 
         // Add label and spinner
         vbox.getChildren().add(label);
         vbox.getChildren().add(spinner);
 
         // Add listener to spinner to update value and change text on label
-        spinner.valueProperty().addListener((obs, oldVal, newVal) -> {
-            // If a bad value is entered into the textbox, default to the 
-            // previous value 
-            try {
-                if (newVal == null) {
-                    spinner.getValueFactory().setValue(oldVal);
-                }
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
+        spinner.getValueFactory().valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) {
+                spinner.getValueFactory().setValue(previousValue);
             }
-            parentNode.onPropertyUpdate(this);
+            else {
+                parentNode.onPropertyUpdate(this);
+                previousValue = value;
+                value = newVal.intValue();
+            }
         });
 
         GUIContent = vbox;
