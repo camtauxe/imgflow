@@ -44,7 +44,7 @@ public abstract class NodeFactory {
             buildNodeMenuItem("opacity",        "Opacity"),
             buildNodeMenuItem("splitcolor",     "Split RGB"),
             buildNodeMenuItem("joincolor",      "Join RBG"),
-            buildNodeMenuItem("matte",           "Matte")
+            buildNodeMenuItem("matte",           "Matte"),
         );
 
         return menu;
