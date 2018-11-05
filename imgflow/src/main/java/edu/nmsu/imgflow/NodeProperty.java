@@ -39,6 +39,12 @@ public abstract class NodeProperty<T> {
     public T getValue() { return value; }
 
     /**
+     * Get a string representation of this property's value,
+     * used when saving the graph to a file.
+     */
+    public String serializeValue() { return value.toString();}
+
+    /**
      * Get the GUI content used to control this property's value
      * and to display in the property panel
      */
