@@ -42,7 +42,10 @@ public abstract class NodeProperty<T> {
      * Get a string representation of this property's value,
      * used when saving the graph to a file.
      */
-    public String serializeValue() { return value.toString();}
+    public String serializeValue() { 
+        if (value == null) return "null";
+        return value.toString();
+    }
 
     /**
      * Get the GUI content used to control this property's value

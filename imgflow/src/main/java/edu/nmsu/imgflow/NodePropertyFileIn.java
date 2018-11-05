@@ -37,6 +37,8 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
         buildGUI();
     }
 
+    public String serializeValue() { return "null"; }
+
     /**
      * Build the property's GUI content
      */

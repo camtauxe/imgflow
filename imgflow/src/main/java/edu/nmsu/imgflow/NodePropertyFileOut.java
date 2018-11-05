@@ -39,6 +39,8 @@ public class NodePropertyFileOut extends NodeProperty<WritableImage> {
         );
     }
 
+    public String serializeValue() { return "null"; }
+
     /**
      * Build the property's GUI content
      */

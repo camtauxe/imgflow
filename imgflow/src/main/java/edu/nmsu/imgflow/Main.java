@@ -152,6 +152,9 @@ public class Main extends Application {
         Menu fileMenu = new Menu("File");
         // Add dummy menu items
         MenuItem save = new MenuItem("Save Graph");
+        save.setOnAction((actionEvent) -> {
+            GraphSaveLoad.chooseFileAndSaveGraph(activeGraph);
+        });
         MenuItem load = new MenuItem("Load Graph");
         fileMenu.getItems().addAll(save, load);
         // Add node creation menu
