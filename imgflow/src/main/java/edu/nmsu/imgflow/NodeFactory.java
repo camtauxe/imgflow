@@ -26,6 +26,7 @@ public abstract class NodeFactory {
             case "joincolor":       return new GraphNodeJoinColor();
             case "matte":           return new GraphNodeMatte();
             case "test":            return new GraphNodeTest();
+            case "blur":            return new GraphNodeBlur();
             default: return null;
         }
     }
@@ -46,7 +47,8 @@ public abstract class NodeFactory {
             buildNodeMenuItem("splitcolor",     "Split RGB"),
             buildNodeMenuItem("joincolor",      "Join RBG"),
             buildNodeMenuItem("matte",           "Matte"),
-            buildNodeMenuItem("test",            "Test")
+            buildNodeMenuItem("test",            "Test"),
+            buildNodeMenuItem("blur",            "Blur")
         );
 
         return menu;
