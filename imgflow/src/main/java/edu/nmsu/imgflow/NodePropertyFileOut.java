@@ -39,6 +39,11 @@ public class NodePropertyFileOut extends NodeProperty<WritableImage> {
         );
     }
 
+    /**
+     * We don't want to save the selected file (or rather, the path)
+     * when saving this node to a file, so it's serialized value
+     * will always just be 'null'
+     */
     public String serializeValue() { return "null"; }
 
     /**

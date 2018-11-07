@@ -150,7 +150,7 @@ public class Main extends Application {
         MenuBar menuBar = new MenuBar();
         // Create "File" Menu
         Menu fileMenu = new Menu("File");
-        // Add dummy menu items
+        // Add menu items
         MenuItem save = new MenuItem("Save Graph");
         save.setOnAction((actionEvent) -> {
             GraphSaveLoad.chooseFileAndSaveGraph(activeGraph);

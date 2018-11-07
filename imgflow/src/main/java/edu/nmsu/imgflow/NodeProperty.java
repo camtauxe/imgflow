@@ -40,7 +40,9 @@ public abstract class NodeProperty<T> {
 
     /**
      * Get a string representation of this property's value,
-     * used when saving the graph to a file.
+     * used when saving the graph to a file. By default,
+     * this just calls toString on the value, but other
+     * properties may want to override it
      */
     public String serializeValue() { 
         if (value == null) return "null";

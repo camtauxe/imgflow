@@ -30,6 +30,10 @@ public abstract class NodeFactory {
         }
     }
 
+    /**
+     * Get the basic type name from the base name of node.
+     * If an invalid string is given, null is returned.
+     */
     public static String typeFromBaseName(String baseName) {
         switch (baseName) {
             case "File IN":         return "filein";
