@@ -45,10 +45,10 @@ public class GraphNodeCrop extends GraphNode {
         }
 
         //get the spinner values to be used in creation of the ouput
-        int originX = (int)((spinnerOriginX.getValue() / 100.0) * inImg.getWidth());
-        int originY = (int)((spinnerOriginY.getValue() / 100.0) * inImg.getWidth());
-        int newWidth = (int)((spinnerWidth.getValue() / 100.0) * inImg.getWidth());
-        int newHeight = (int)((spinnerHeight.getValue() / 100.0) * inImg.getHeight());
+        int originX = spinnerOriginX.getValue();
+        int originY = spinnerOriginY.getValue();
+        int newWidth = spinnerWidth.getValue();
+        int newHeight = spinnerHeight.getValue();
 
         //error checking, default image width to as large as can be 
         //if user attempting to crop past the edge of picture
@@ -58,12 +58,14 @@ public class GraphNodeCrop extends GraphNode {
             newHeight = (int) inImg.getHeight() - originY;
 
 
-        WritableImage outImg = new WritableImage(inImg.getPixelReader(), originX,originY,newWidth, newHeight);
+        WritableImage outImg = new WritableImage(inImg.getPixelReader(), originX, originY, newWidth, newHeight);
 
         // Send to output socket
         out.setImage(outImg);
     }
 
+    //overide the function to dynamically update the max value of the 
+    //spinner based on the dimensions of the input image
     public void onInputUpdate(NodeSocketInput socket) {
         super.onInputUpdate(socket);
         in.requestUpdate();
