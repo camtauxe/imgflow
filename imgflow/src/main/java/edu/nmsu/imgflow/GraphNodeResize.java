@@ -33,14 +33,14 @@ public class GraphNodeResize extends GraphNode {
     public String getBaseName() { return "Resize"; }
 
     /**
-     * Override processImage to invert the colors of the input image
+     * Override processImage to resize the input image
      * and send it to the output.
      */
     public void processImage() {
         //not sure why, but if requestUpdate is not called, getValue on the
         //spinners isn't fuctioning correctly
         in.requestUpdate();
-        
+
         // Get input image information
         Image inImg = in.getImage();
         // If there is no input image, clear the output image and finish
@@ -63,7 +63,7 @@ public class GraphNodeResize extends GraphNode {
         int widthScale = (int)inImg.getWidth() / newWidth;
         int heightScale = (int)inImg.getHeight() / newHeight;
 
-        // Iterate through pixels and invert colors
+        // Selectively move pixels from input to output based on a scale
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {
                 Color inColor = reader.getColor(x * widthScale, y * heightScale);
