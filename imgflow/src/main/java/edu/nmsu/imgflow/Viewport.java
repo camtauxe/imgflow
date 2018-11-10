@@ -508,6 +508,22 @@ public class Viewport {
      */
     public HoverQuery getHoverQuery() { return hoverQuery; }
 
+    /**
+     * Set the graph displayed in the viewport to a new graph.
+     * Also resets the state of anything being dragged or connections
+     * being drawn
+     */
+    public void setGraph(Graph newGraph) {
+        graph = newGraph;
+        dragAnchor          = null;
+        draggingNode        = null;
+        draggingNodeOffset  = null;
+        connectingSocket    = null;
+        connectingPoint     = null;
+        hoverQuery          = HoverQuery.NO_HOVER;
+        prevHoverQuery      = HoverQuery.NO_HOVER;
+    }
+
     // ################################
     // # SUBCLASSES
     // ################################

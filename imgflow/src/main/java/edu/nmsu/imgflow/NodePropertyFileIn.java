@@ -45,6 +45,12 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
     public String serializeValue() { return "null"; }
 
     /**
+     * The File In property does not do any saving or loading,
+     * so this function does nothing
+     */
+    public void valueFromString(String str) {}; 
+
+    /**
      * Build the property's GUI content
      */
     private void buildGUI() {

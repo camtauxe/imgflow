@@ -77,4 +77,22 @@ public class NodePropertySlider extends NodeProperty<Integer> {
 
         GUIContent = vbox;
     }
+
+    /**
+     * Set the slider's value according to the given string.
+     * The value is clamped between the slider's minimum and
+     * maximum values.
+     * If the string cannot be parsed into a number, the value
+     * does not change.
+     */
+    public void valueFromString(String str) {
+        try {
+            int newVal = Integer.parseInt(str);
+            if (newVal > sliderMax)
+                newVal = sliderMax;
+            else if (newVal < sliderMin)
+                newVal = sliderMin;
+            slider.setValue(newVal);
+        } catch (NumberFormatException e) {}
+    }
 }

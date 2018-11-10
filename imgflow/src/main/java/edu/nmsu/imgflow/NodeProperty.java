@@ -50,6 +50,12 @@ public abstract class NodeProperty<T> {
     }
 
     /**
+     * Set the value of this property according to a given string.
+     * Used when loading the property from a file.
+     */
+    public abstract void valueFromString(String str);
+
+    /**
      * Get the GUI content used to control this property's value
      * and to display in the property panel
      */

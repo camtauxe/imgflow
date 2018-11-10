@@ -156,6 +156,17 @@ public class Main extends Application {
             GraphSaveLoad.chooseFileAndSaveGraph(activeGraph);
         });
         MenuItem load = new MenuItem("Load Graph");
+        load.setOnAction((actionEvent) -> {
+            Graph newGraph = GraphSaveLoad.chooseFileAndLoadGraph();
+            if (newGraph != null) {
+                activeGraph = newGraph;
+                activeGraph.addNodeSelectListener((node) -> {
+                    propertyPanel.updateSelectedNode(node);
+                });
+                viewport.setGraph(newGraph);
+                propertyPanel.updateSelectedNode(null);
+            }
+        });
         fileMenu.getItems().addAll(save, load);
         // Add node creation menu
         Menu createMenu = NodeFactory.buildNodeCreationMenu();
