@@ -2,9 +2,11 @@ package edu.nmsu.imgflow;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Spinner;
+
+import javafx.beans.value.ChangeListener;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
-import javafx.scene.control.SpinnerValueFactory;
 // import javafx.beans.value.ChangeListener;
 
 /**
@@ -36,9 +38,20 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
     private int     spinnerInitialValue;
 
     /**
-     * The last acceptable value. Used to revert to when an invalid value is entered.
+     * The change listener used to respond to changes in the spinner.
+     * This defined here because it will need to be re-assigned whenever
+     * the spinner's value factory changes. For instance when calling updateSpinnerMax()
      */
-    private int     previousValue;
+    private ChangeListener<Integer> spinnerListener = (obs, oldVal, newVal) -> {
+        // If new value is null (not a number) or out of range, do not update value
+        // It is possible for the new value to be out of range because, when entering
+        // an out of range value, this listener is still called once before it is changed
+        if (newVal != null && newVal >= spinnerMin && newVal >= spinnerMax) {
+            value = newVal.intValue();
+            System.out.println(value);
+            parentNode.onPropertyUpdate(this);
+        }
+    };
 
     /**
      * Create a new NodePropertySpinner with the given parent node, min, max and name.
@@ -58,7 +71,6 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
             spinnerInitialValue = spinnerMax;
 
         value = spinnerInitialValue;
-        previousValue = spinnerInitialValue;
 
         buildGUI();
     }
@@ -82,18 +94,8 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
         vbox.getChildren().add(label);
         vbox.getChildren().add(spinner);
 
-        // Add listener to spinner to update value and change text on label
-        spinner.getValueFactory().valueProperty().addListener((obs, oldVal, newVal) -> {
-            // If new value is null (not a number) or out of range, do not update value
-            // It is possible for the new value to be out of range because, when entering
-            // an out of range value, this listener is still called once before it is changed
-            if (newVal != null && newVal >= spinnerMin && newVal >= spinnerMax) {
-                value = newVal.intValue();
-                previousValue = value;
-                System.out.println(value);
-                parentNode.onPropertyUpdate(this);
-            }
-        });
+        // Add listener
+        spinner.getValueFactory( ).valueProperty().addListener(spinnerListener);
 
         GUIContent = vbox;
     }
@@ -103,8 +105,9 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
     public void updateSpinnerMax(int newMax){
         IntegerSpinnerValueFactory newFactory = new IntegerSpinnerValueFactory(spinnerMin, newMax, getValue());
         
-        //must be set back to true for the new ValueFactory otherwise it won't wrap
+        //set wraparound and listener for new value factory
         newFactory.setWrapAround(true);
+        newFactory.valueProperty().addListener(spinnerListener);
 
         spinner.setValueFactory(newFactory); 
     }
