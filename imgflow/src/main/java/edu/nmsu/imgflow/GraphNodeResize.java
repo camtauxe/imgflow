@@ -49,9 +49,7 @@ public class GraphNodeResize extends GraphNode {
             return;
         }
 
-
         PixelReader reader = inImg.getPixelReader();
-
 
         int newWidth   = newWidthSpinner.getValue();
         int newHeight  = newHeightSpinner.getValue();

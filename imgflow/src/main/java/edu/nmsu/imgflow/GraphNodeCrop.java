@@ -67,7 +67,6 @@ public class GraphNodeCrop extends GraphNode {
     //overide the function to dynamically update the max value of the 
     //spinner based on the dimensions of the input image
     public void onInputUpdate(NodeSocketInput socket) {
-        super.onInputUpdate(socket);
         in.requestUpdate();
         if(in.getImage() != null){
             spinnerOriginX.updateSpinnerMax( (int) in.getImage().getWidth() );
@@ -75,5 +74,6 @@ public class GraphNodeCrop extends GraphNode {
             spinnerWidth.updateSpinnerMax( (int) in.getImage().getWidth() );
             spinnerHeight.updateSpinnerMax( (int) in.getImage().getHeight() );
         }
+        super.onInputUpdate(socket);
     }
 }
