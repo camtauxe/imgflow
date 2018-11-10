@@ -53,4 +53,11 @@ public class NodePropertyText extends NodeProperty<String> {
 
         GUIContent = vbox;
     }
+
+    /**
+     * Set the value of this property according to the given string
+     */
+    public void valueFromString(String str) {
+        field.setText(str);
+    }
 }

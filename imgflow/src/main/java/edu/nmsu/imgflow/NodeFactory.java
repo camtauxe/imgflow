@@ -25,6 +25,28 @@ public abstract class NodeFactory {
             case "splitcolor":      return new GraphNodeSplitColor();
             case "joincolor":       return new GraphNodeJoinColor();
             case "matte":           return new GraphNodeMatte();
+            case "crop":            return new GraphNodeCrop();
+            case "resize":          return new GraphNodeResize();
+            case "test":            return new GraphNodeTest();
+            default: return null;
+        }
+    }
+
+    /**
+     * Get the basic type name from the base name of node.
+     * If an invalid string is given, null is returned.
+     */
+    public static String typeFromBaseName(String baseName) {
+        switch (baseName) {
+            case "File IN":         return "filein";
+            case "File OUT":        return "fileout";
+            case "Invert":          return "invert";
+            case "Color Effects":   return "coloreffects";
+            case "opacity":         return "Opacity";
+            case "Split RGB":       return "splitcolor";
+            case "Join RGB":        return "joincolor";
+            case "Matte":           return "matte";
+            case "Test Node":       return "test";
             default: return null;
         }
     }
@@ -44,7 +66,10 @@ public abstract class NodeFactory {
             buildNodeMenuItem("opacity",        "Opacity"),
             buildNodeMenuItem("splitcolor",     "Split RGB"),
             buildNodeMenuItem("joincolor",      "Join RBG"),
-            buildNodeMenuItem("matte",           "Matte")
+            buildNodeMenuItem("matte",          "Matte"),
+            buildNodeMenuItem("crop",           "Crop"),
+            buildNodeMenuItem("resize",         "Resize"),
+            buildNodeMenuItem("test",           "Test")
         );
 
         return menu;
