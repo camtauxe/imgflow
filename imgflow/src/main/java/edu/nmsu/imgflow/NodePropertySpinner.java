@@ -110,4 +110,22 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
 
         spinner.setValueFactory(newFactory); 
     }
+
+    /**
+     * Set the spinner's value according to the given string.
+     * The value is clamped between the spinner's minimum and
+     * maximum values.
+     * If the string cannot be parsed into a number, the value
+     * does not change.
+     */
+    public void valueFromString(String str) {
+        try {
+            int newVal = Integer.parseInt(str);
+            if (newVal > spinnerMax)
+                newVal = spinnerMax;
+            else if (newVal < spinnerMin)
+                newVal = spinnerMin;
+            spinner.getValueFactory().setValue(newVal);
+        } catch (NumberFormatException e) {}
+    }
 }

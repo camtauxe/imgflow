@@ -1,7 +1,5 @@
 package edu.nmsu.imgflow;
 
-import java.util.ArrayList;
-
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.ColumnConstraints;
@@ -99,15 +97,7 @@ public class Viewport {
      * (relative to the position of the node, in graph units). Null if no node is being dragged.
      */
     private Point2D draggingNodeOffset;
-    /**
-     * The node that is currently selected, or null if no node is selected.
-     */
-    private GraphNode selectedNode;
-    /**
-     * The list of registered node selection listeners, triggered
-     * when the selection changes.
-     */
-    private ArrayList<NodeSelectListener> nodeSelectListeners;
+
     /**
      * If a connection is being drawn,
      * this references the socket the connection
@@ -144,7 +134,6 @@ public class Viewport {
      */
     public Viewport(Graph graph) {
         this.graph = graph;
-        nodeSelectListeners = new ArrayList<NodeSelectListener>();
         prevHoverQuery = HoverQuery.NO_HOVER;
         hoverQuery = HoverQuery.NO_HOVER;
         buildPane();
@@ -345,7 +334,7 @@ public class Viewport {
                 connectingPoint = null;
             }
             else {
-                // If a node is being hovered over, select it (if it isn't already selected)
+                // If a node is being hovered over, select it
                 // and start drawing a connection if over a socket
                 if (hoverQuery != HoverQuery.NO_HOVER) {
                     if (hoverQuery.isOverSocket()) {
@@ -353,17 +342,11 @@ public class Viewport {
                         connectingPoint = graphCoord;
                         connectingSocket.disconnect();
                     }
-                    if (hoverQuery.getHoveringNode() != selectedNode) {
-                        selectedNode = hoverQuery.getHoveringNode();
-                        for (NodeSelectListener listener : nodeSelectListeners)
-                            listener.handle(selectedNode);
-                    }
+                    graph.selectNode(hoverQuery.getHoveringNode());
                 }
-                // If no node is being hovered over, deselect if one is selected
-                else if (selectedNode != null) {
-                    selectedNode = null;
-                    for (NodeSelectListener listener : nodeSelectListeners)
-                        listener.handle(null);
+                // If no node is being hovered over, deselect
+                else {
+                    graph.selectNode(null);
                 }
                 dragAnchor          = null;
                 draggingNode        = null;
@@ -505,15 +488,6 @@ public class Viewport {
             .multiply(scaleFactor);
     }
 
-    /**
-     * Add a node select listener to this viewport. It will be invoked
-     * whenever the selected node changes (this includes when a node
-     * is deselected)
-     */
-    public void addNodeSelectListener(NodeSelectListener listener) {
-        nodeSelectListeners.add(listener);
-    }
-
     // ################################
     // # GETTERS / SETTERS
     // ################################
@@ -535,10 +509,20 @@ public class Viewport {
     public HoverQuery getHoverQuery() { return hoverQuery; }
 
     /**
-     * Get the currently selected node.
-     * Null if no node is selected.
+     * Set the graph displayed in the viewport to a new graph.
+     * Also resets the state of anything being dragged or connections
+     * being drawn
      */
-    public GraphNode getSelectedNode() { return selectedNode; }
+    public void setGraph(Graph newGraph) {
+        graph = newGraph;
+        dragAnchor          = null;
+        draggingNode        = null;
+        draggingNodeOffset  = null;
+        connectingSocket    = null;
+        connectingPoint     = null;
+        hoverQuery          = HoverQuery.NO_HOVER;
+        prevHoverQuery      = HoverQuery.NO_HOVER;
+    }
 
     // ################################
     // # SUBCLASSES

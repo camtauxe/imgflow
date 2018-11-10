@@ -62,4 +62,19 @@ public class NodePropertyDropDown extends NodeProperty<String> {
 
         GUIContent = vbox;
     }
+
+    /**
+     * Set the selected value according to the given string.
+     * If the given string is not in the options, this simply
+     * selects the first option.
+     */
+    public void valueFromString(String str) {
+        for (int i = 0; i < options.length; i++) {
+            if (str.equals(options[i])) {
+                menu.getSelectionModel().select(i);
+                return;
+            }
+        }
+        menu.getSelectionModel().select(0);
+    }
 }

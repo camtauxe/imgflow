@@ -33,6 +33,25 @@ public abstract class NodeFactory {
     }
 
     /**
+     * Get the basic type name from the base name of node.
+     * If an invalid string is given, null is returned.
+     */
+    public static String typeFromBaseName(String baseName) {
+        switch (baseName) {
+            case "File IN":         return "filein";
+            case "File OUT":        return "fileout";
+            case "Invert":          return "invert";
+            case "Color Effects":   return "coloreffects";
+            case "opacity":         return "Opacity";
+            case "Split RGB":       return "splitcolor";
+            case "Join RGB":        return "joincolor";
+            case "Matte":           return "matte";
+            case "Test Node":       return "test";
+            default: return null;
+        }
+    }
+
+    /**
      * Create a JavaFX menu with MenuItems for creating new nodes
      * and adding them to the active graph.
      */
