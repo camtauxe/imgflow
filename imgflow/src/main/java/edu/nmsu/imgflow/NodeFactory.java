@@ -25,6 +25,8 @@ public abstract class NodeFactory {
             case "splitcolor":      return new GraphNodeSplitColor();
             case "joincolor":       return new GraphNodeJoinColor();
             case "matte":           return new GraphNodeMatte();
+            case "crop":            return new GraphNodeCrop();
+            case "resize":          return new GraphNodeResize();
             case "test":            return new GraphNodeTest();
             default: return null;
         }
@@ -45,8 +47,10 @@ public abstract class NodeFactory {
             buildNodeMenuItem("opacity",        "Opacity"),
             buildNodeMenuItem("splitcolor",     "Split RGB"),
             buildNodeMenuItem("joincolor",      "Join RBG"),
-            buildNodeMenuItem("matte",           "Matte"),
-            buildNodeMenuItem("test",            "Test")
+            buildNodeMenuItem("matte",          "Matte"),
+            buildNodeMenuItem("crop",           "Crop"),
+            buildNodeMenuItem("resize",         "Resize"),
+            buildNodeMenuItem("test",           "Test")
         );
 
         return menu;
