@@ -71,14 +71,17 @@ public class GraphNodeChromaKey extends GraphNode {
                 double blue  = inColor.getBlue();
                 
                 // Get threshold value from slider
-                double threshold = thresholdSlider.getValue();
-                
-                // When color is within the threshold clear it
-                if(Math.abs(red - targetR) < threshold &&  Math.abs(green - targetG) < threshold && Math.abs(blue - targetB) < threshold) {
-                    writer.setColor(x, y, new Color(red, green, blue, 0.0));
+                double threshold = thresholdSlider.getValue() / 100.0 * 3.0;
+
+                // Aproximate the difference between the two colors
+                double diff = Math.abs(red - targetR) + Math.abs(blue - targetB) + Math.abs(green - targetG);
+
+                // If the color is within the threshold, set it to transparent
+                if(diff < threshold) {
+                    writer.setColor(x, y, Color.TRANSPARENT);
                 }
                 else //leave color unchanged
-                    writer.setColor(x, y, inColor);                    
+                    writer.setColor(x, y, inColor);
             }
         }        
         // Send to output socket
