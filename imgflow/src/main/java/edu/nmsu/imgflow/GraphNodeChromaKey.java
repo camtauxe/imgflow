@@ -80,8 +80,7 @@ public class GraphNodeChromaKey extends GraphNode {
                 else //leave color unchanged
                     writer.setColor(x, y, inColor);                    
             }
-        }
-        
+        }        
         // Send to output socket
         out.setImage(outImg);
     }   
