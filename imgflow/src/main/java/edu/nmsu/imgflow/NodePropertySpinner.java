@@ -48,7 +48,6 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
         // an out of range value, this listener is still called once before it is changed
         if (newVal != null && newVal >= spinnerMin && newVal >= spinnerMax) {
             value = newVal.intValue();
-            System.out.println(value);
             parentNode.onPropertyUpdate(this);
         }
     };
