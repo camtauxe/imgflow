@@ -1,8 +1,12 @@
 package edu.nmsu.imgflow;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
@@ -27,6 +31,10 @@ public class PropertyPanel {
      */
     private ImageView preview;
     /**
+     * A label displaying the type of the selected node
+     */
+    private Label nodeLabel;
+    /**
      * The VBox containing the node's properties' GUI
      */
     private VBox propertyBox;
@@ -34,6 +42,10 @@ public class PropertyPanel {
      * The warning displayed when no node is selected
      */
     private Label noSelectionLabel;
+    /**
+     * A pane to contain the noSelectionLabel for layout purposes
+     */
+    private StackPane labelWrapper;
     /**
      * Button to delete the selected node from the graph
      */
@@ -48,7 +60,7 @@ public class PropertyPanel {
      */
     public PropertyPanel() {
         vbox = new VBox(5.0);
-        vbox.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
+        vbox.setPadding(new Insets(20.0, 15.0, 20.0, 15.0));
 
         // Create a wrapper pane and place the the preview ImageView inside it
         Pane previewWrapper = new Pane();
@@ -60,21 +72,38 @@ public class PropertyPanel {
         preview.fitWidthProperty().bind(previewWrapper.widthProperty());
         previewWrapper.getChildren().add(preview);
 
+        nodeLabel = new Label("");
+        nodeLabel.getStyleClass().add("node-label");
+        HBox nodeLabelWrapper = new HBox();
+        nodeLabelWrapper.setAlignment(Pos.BASELINE_CENTER);
+        nodeLabelWrapper.getChildren().add(nodeLabel);
+        vbox.getChildren().add(nodeLabelWrapper);
+
         noSelectionLabel = new Label("No Node selected...");
+        noSelectionLabel.getStyleClass().add("no-selection-label");
+        labelWrapper = new StackPane();
+        labelWrapper.setAlignment(Pos.CENTER);
+        labelWrapper.getChildren().add(noSelectionLabel);
+        VBox.setVgrow(labelWrapper, Priority.ALWAYS);
 
         propertyBox = new VBox(10.0);
         propertyBox.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
+        propertyBox.getStyleClass().add("property-box");
         VBox.setVgrow(propertyBox, Priority.ALWAYS);
         vbox.getChildren().add(propertyBox);
 
-        deleteNodeButton = new Button("Delete");
+        deleteNodeButton = new Button("Delete Node");
         deleteNodeButton.setOnAction((actionEvent) -> {
             if (selectedNode == null) return;
             selectedNode.disconnectAllSockets();
             Main.getInstance().getActiveGraph().getNodes().remove(selectedNode);
             updateSelectedNode(null);
         });
-        vbox.getChildren().add(deleteNodeButton);
+        // The Delete node button is placed inside an Hbox to right-align it
+        HBox buttonWrapper = new HBox();
+        buttonWrapper.setAlignment(Pos.BASELINE_RIGHT);
+        buttonWrapper.getChildren().add(deleteNodeButton);
+        vbox.getChildren().add(buttonWrapper);
 
         updateSelectedNode(null);
     }
@@ -94,10 +123,15 @@ public class PropertyPanel {
 
         if (selectedNode == null) {
             preview.setImage(null);
-            propertyBox.getChildren().add(noSelectionLabel);
+            nodeLabel.setVisible(false);
+            propertyBox.getChildren().add(labelWrapper);
             deleteNodeButton.setDisable(true);
+            deleteNodeButton.setVisible(false);
         } else {
+            nodeLabel.setText(newSelection.getBaseName());
+            nodeLabel.setVisible(true);
             deleteNodeButton.setDisable(false);
+            deleteNodeButton.setVisible(true);
             for (NodeProperty<?> prop : selectedNode.properties)
                 propertyBox.getChildren().add(prop.getGUIContent());
             // Update preivew image

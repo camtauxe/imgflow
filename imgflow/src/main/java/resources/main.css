@@ -1,3 +1,25 @@
 .root {
     -fx-base: #222222;
 }
+
+.menu-bar {
+    -fx-background-color: #333333;
+}
+
+.context-menu {
+    -fx-background-color: #444444;
+}
+
+.property-box {
+    -fx-border-width: 3px;
+    -fx-border-color: #555555;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-color: #333333;
+}
+
+.no-selection-label,
+.node-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14pt;
+}
