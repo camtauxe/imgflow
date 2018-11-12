@@ -7,7 +7,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.PixelReader;
 import javafx.scene.control.Spinner;
 
-//fixme: make function for resizing to larger image
 
 /**
  * A type of graph node that inverts the colors of an image
