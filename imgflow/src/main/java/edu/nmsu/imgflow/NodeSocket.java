@@ -54,27 +54,15 @@ public abstract class NodeSocket {
     // # PUBLIC METHODS
     // ################################
 
-    public void connect(NodeSocket otherSocket) {
-        /** This should be overriden by a derived class */
-    }
+    public abstract void connect(NodeSocket otherSocket);
 
-    public void disconnect() {
-        /** This should be overriden by a derived class */
-    }
+    public abstract void disconnect();
 
-    public void propagateUpdate() {
-        
-    }
+    public abstract void propagateUpdate();
 
-    public boolean needsUpdate() {
-        /** This should be overriden by a derived class */
-        return false;
-    }
+    public abstract boolean needsUpdate();
 
-    public WritableImage getImage() {
-        /** This should be overriden by a derived class */
-        return null;
-    }
+    public abstract WritableImage getImage();
 
     // ################################
     // # GETTERS/SETTERS

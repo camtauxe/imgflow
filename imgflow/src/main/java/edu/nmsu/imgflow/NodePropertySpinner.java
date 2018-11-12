@@ -2,6 +2,9 @@ package edu.nmsu.imgflow;
 
 import javafx.scene.layout.VBox;
 import javafx.scene.control.Spinner;
+
+import javafx.beans.value.ChangeListener;
+
 import javafx.scene.control.Label;
 import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory;
 // import javafx.beans.value.ChangeListener;
@@ -35,9 +38,19 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
     private int     spinnerInitialValue;
 
     /**
-     * The last acceptable value. Used to revert to when an invalid value is entered.
+     * The change listener used to respond to changes in the spinner.
+     * This defined here because it will need to be re-assigned whenever
+     * the spinner's value factory changes. For instance when calling updateSpinnerMax()
      */
-    private int     previousValue;
+    private ChangeListener<Integer> spinnerListener = (obs, oldVal, newVal) -> {
+        // If new value is null (not a number) or out of range, do not update value
+        // It is possible for the new value to be out of range because, when entering
+        // an out of range value, this listener is still called once before it is changed
+        if (newVal != null && newVal >= spinnerMin && newVal <= spinnerMax) {
+            value = newVal.intValue();
+            parentNode.onPropertyUpdate(this);
+        }
+    };
 
     /**
      * Create a new NodePropertySpinner with the given parent node, min, max and name.
@@ -49,15 +62,14 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
         spinnerMax = max;
 
         // Clamp default value to be within min and max
-        if(spinnerInitialValue <= spinnerMax && spinnerInitialValue >= spinnerMin)
+        if(defaultValue <= spinnerMax && defaultValue >= spinnerMin)
             spinnerInitialValue = defaultValue;
-        else if(spinnerInitialValue < spinnerMin)
+        else if(defaultValue < spinnerMin)
             spinnerInitialValue = spinnerMin;
         else
             spinnerInitialValue = spinnerMax;
 
         value = spinnerInitialValue;
-        previousValue = spinnerInitialValue;
 
         buildGUI();
     }
@@ -72,26 +84,48 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
         IntegerSpinnerValueFactory valueFactory = new IntegerSpinnerValueFactory(spinnerMin, spinnerMax, spinnerInitialValue);
         spinner  = new Spinner<Integer>(valueFactory);
 
-        // This causes a lot of problems if somone enters a non-number into the spinner and it's
-        // very difficult to fix, so for now, we'll just disable it
-        //spinner.setEditable(true);
+        spinner.setEditable(true);
+        
+        //allows the spinner to be circular
+        valueFactory.setWrapAround(true);
 
         // Add label and spinner
         vbox.getChildren().add(label);
         vbox.getChildren().add(spinner);
 
-        // Add listener to spinner to update value and change text on label
-        spinner.getValueFactory().valueProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal == null) {
-                spinner.getValueFactory().setValue(previousValue);
-            }
-            else {
-                parentNode.onPropertyUpdate(this);
-                previousValue = value;
-                value = newVal.intValue();
-            }
-        });
+        // Add listener
+        spinner.getValueFactory( ).valueProperty().addListener(spinnerListener);
 
         GUIContent = vbox;
+    }
+
+    //updates the maximum value of the passed in spinner to newMax by creating a new ValueFactory
+    //and updating the spinners ValueFactory
+    public void updateSpinnerMax(int newMax){
+        IntegerSpinnerValueFactory newFactory = new IntegerSpinnerValueFactory(spinnerMin, newMax, getValue());
+        
+        //set wraparound and listener for new value factory
+        newFactory.setWrapAround(true);
+        newFactory.valueProperty().addListener(spinnerListener);
+
+        spinner.setValueFactory(newFactory); 
+    }
+
+    /**
+     * Set the spinner's value according to the given string.
+     * The value is clamped between the spinner's minimum and
+     * maximum values.
+     * If the string cannot be parsed into a number, the value
+     * does not change.
+     */
+    public void valueFromString(String str) {
+        try {
+            int newVal = Integer.parseInt(str);
+            if (newVal > spinnerMax)
+                newVal = spinnerMax;
+            else if (newVal < spinnerMin)
+                newVal = spinnerMin;
+            spinner.getValueFactory().setValue(newVal);
+        } catch (NumberFormatException e) {}
     }
 }

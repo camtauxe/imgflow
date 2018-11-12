@@ -44,6 +44,19 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
     }
 
     /**
+     * We don't want to save the selected file (or rather, the path)
+     * when saving this node to a file, so it's serialized value
+     * will always just be 'null'
+     */
+    public String serializeValue() { return "null"; }
+
+    /**
+     * The File In property does not do any saving or loading,
+     * so this function does nothing
+     */
+    public void valueFromString(String str) {}; 
+
+    /**
      * Build the property's GUI content
      */
     private void buildGUI() {
