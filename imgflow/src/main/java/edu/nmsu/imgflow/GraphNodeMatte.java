@@ -25,8 +25,8 @@ public class GraphNodeMatte extends GraphNode {
     
     public String getBaseName() { return "Matte"; }
 
-    public int getNumInputSockets() { return 2; }
-    
+    public int getNumInputSockets()  { return 2; }
+    public int getNumOutputSockets() { return 1; }    
     /**
      * Override processImage to find the brightness to change the opacity of the base image
      * and send the edited image to the output.

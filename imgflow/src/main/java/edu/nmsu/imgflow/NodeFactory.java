@@ -28,6 +28,29 @@ public abstract class NodeFactory {
             case "crop":            return new GraphNodeCrop();
             case "resize":          return new GraphNodeResize();
             case "test":            return new GraphNodeTest();
+            case "composite":       return new GraphNodeComposite();
+            case "chromakey":       return new GraphNodeChromaKey();
+            default: return null;
+        }
+    }
+
+    /**
+     * Get the basic type name from the base name of node.
+     * If an invalid string is given, null is returned.
+     */
+    public static String typeFromBaseName(String baseName) {
+        switch (baseName) {
+            case "File IN":         return "filein";
+            case "File OUT":        return "fileout";
+            case "Invert":          return "invert";
+            case "Color Effects":   return "coloreffects";
+            case "opacity":         return "Opacity";
+            case "Split RGB":       return "splitcolor";
+            case "Join RGB":        return "joincolor";
+            case "Matte":           return "matte";
+            case "Test Node":       return "test";
+            case "Composite":       return "composite";
+            case "Chroma Key":      return "chromakey";
             default: return null;
         }
     }
@@ -50,6 +73,8 @@ public abstract class NodeFactory {
             buildNodeMenuItem("matte",          "Matte"),
             buildNodeMenuItem("crop",           "Crop"),
             buildNodeMenuItem("resize",         "Resize"),
+            buildNodeMenuItem("composite",      "Composite"),
+            buildNodeMenuItem("chromakey",      "Chroma Key"),
             buildNodeMenuItem("test",           "Test")
         );
 

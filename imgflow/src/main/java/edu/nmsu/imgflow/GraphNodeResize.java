@@ -6,6 +6,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.PixelReader;
 
+//FIXME: fix spinners
+//fixme: make function for resizing to larger image
+
 /**
  * A type of graph node that inverts the colors of an image
  */
@@ -20,8 +23,8 @@ public class GraphNodeResize extends GraphNode {
 
     public GraphNodeResize() {
 
-        newWidthSpinner = new NodePropertySpinner(this, "Width", 0, 100, 100);
-        newHeightSpinner = new NodePropertySpinner(this, "Height", 0, 100, 100);
+        newWidthSpinner = new NodePropertySpinner(this, "Width", 1, 100, 100);
+        newHeightSpinner = new NodePropertySpinner(this, "Height", 1, 100, 100);
 
         properties.add(newWidthSpinner);
         properties.add(newHeightSpinner);
@@ -73,15 +76,18 @@ public class GraphNodeResize extends GraphNode {
         out.setImage(outImg);
     }
     
-    //overide the function to dynamically update the max value of the 
-    //spinner based on the dimensions of the input image
-    public void onInputUpdate(NodeSocketInput socket) {
-        super.onInputUpdate(socket);
-        in.requestUpdate();
-        if(in.getImage() != null){
-            newWidthSpinner.updateSpinnerMax( (int) in.getImage().getWidth() );
-            newHeightSpinner.updateSpinnerMax( (int) in.getImage().getHeight() );
-        }
-    }
+
+    //moved to static value spinners as dynamic updating was causing performance issues 
+
+    // //overide the function to dynamically update the max value of the 
+    // //spinner based on the dimensions of the input image
+    // public void onInputUpdate(NodeSocketInput socket) {
+    //     super.onInputUpdate(socket);
+    //     in.requestUpdate();
+    //     if(in.getImage() != null){
+    //         newWidthSpinner.updateSpinnerMax( (int) in.getImage().getWidth() );
+    //         newHeightSpinner.updateSpinnerMax( (int) in.getImage().getHeight() );
+    //     }
+    // }
 
 }

@@ -142,6 +142,20 @@ public abstract class GraphNode {
     public int getNumOutputSockets() { return 1; }
 
     /**
+     * Get the socket whose image this node uses to draw its thumbnail preview.
+     * By default, this will be the first output socket (or input socket if there
+     * are no outputs), but other nodes may override it. This can also be null
+     * if the node does not have a thumbnail preview.
+     */
+    public NodeSocket getThumbnailSocket() {
+        if (getNumOutputSockets() > 0)
+            return outputSockets.get(0);
+        else if (getNumInputSockets() > 0)
+            return inputSockets.get(0);
+        return null;
+    }
+
+    /**
      * Process the image from the input(s) and write new image data
      * to the output(s). This function should not be called directly and is
      * instead called by the graph node's update() function which will gaurentee
@@ -155,9 +169,10 @@ public abstract class GraphNode {
     /**
      * Respond to a node property updating its value. By default, this will propagate
      * an update through this node's output sockets, unless the changed property
-     * is the name property in which case the node changes its name. Some graph nodes
-     * may want to override this to do something else (for example, only update
-     * some outputs depending on the property that was updated).
+     * is the name property in which case the node changes its name. Also, if the node
+     * is currently selected, it will update to refresh the preview image.
+     * Some graph nodes may want to override this to do something else 
+     * (for example, only update some outputs depending on the property that was updated).
      */
     public void onPropertyUpdate(NodeProperty<?> updatedProperty) {
         if (updatedProperty == nameProperty) {
@@ -166,6 +181,10 @@ public abstract class GraphNode {
         else {
             for (NodeSocketOutput output : outputSockets) {
                 output.propagateUpdate();
+            }
+            if (Main.getInstance().getActiveGraph().getSelectedNode() == this) {
+                update();
+                Main.getInstance().getPropertyPanel().refreshPreview();
             }
         }
     }
@@ -274,10 +293,11 @@ public abstract class GraphNode {
         }
 
         // Draw outline if node is being hovered over or selected
-        if (viewport.getHoverQuery().getHoveringNode() == this || viewport.getSelectedNode() == this) {
+        boolean isSelected = Main.getInstance().getActiveGraph().getSelectedNode() == this;
+        if (viewport.getHoverQuery().getHoveringNode() == this || isSelected) {
             ctx.setLineWidth(viewport.pixelsToGraphUnits(3.0));
             // outline color depends on if this node is selected or not
-            ctx.setStroke(viewport.getSelectedNode() == this ? Color.YELLOW : Color.WHITE);
+            ctx.setStroke(isSelected ? Color.YELLOW : Color.WHITE);
             ctx.strokeRect(0.0, 0.0, NODE_WIDTH, cursorY);
         }
 

@@ -39,6 +39,23 @@ public abstract class NodeProperty<T> {
     public T getValue() { return value; }
 
     /**
+     * Get a string representation of this property's value,
+     * used when saving the graph to a file. By default,
+     * this just calls toString on the value, but other
+     * properties may want to override it
+     */
+    public String serializeValue() { 
+        if (value == null) return "null";
+        return value.toString();
+    }
+
+    /**
+     * Set the value of this property according to a given string.
+     * Used when loading the property from a file.
+     */
+    public abstract void valueFromString(String str);
+
+    /**
      * Get the GUI content used to control this property's value
      * and to display in the property panel
      */
