@@ -22,8 +22,8 @@ public class GraphNodeResize extends GraphNode {
 
     public GraphNodeResize() {
 
-        newWidthSpinner = new NodePropertySpinner(this, "Width", 1, 10000, 100, Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
-        newHeightSpinner = new NodePropertySpinner(this, "Height", 1, 10000, 100);
+        newWidthSpinner = new NodePropertySpinner(this, "Width", 1, 4500, 100, Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
+        newHeightSpinner = new NodePropertySpinner(this, "Height", 1, 4500, 100);
 
         properties.add(newWidthSpinner);
         properties.add(newHeightSpinner);
