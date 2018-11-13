@@ -27,9 +27,11 @@ public abstract class NodeFactory {
             case "matte":           return new GraphNodeMatte();
             case "crop":            return new GraphNodeCrop();
             case "resize":          return new GraphNodeResize();
-            case "test":            return new GraphNodeTest();
             case "composite":       return new GraphNodeComposite();
             case "chromakey":       return new GraphNodeChromaKey();
+            case "rectangle":       return new GraphNodeRectangle();
+            case "ellipse":         return new GraphNodeEllipse();
+            case "test":            return new GraphNodeTest();
             default: return null;
         }
     }
@@ -48,9 +50,13 @@ public abstract class NodeFactory {
             case "Split RGB":       return "splitcolor";
             case "Join RGB":        return "joincolor";
             case "Matte":           return "matte";
-            case "Test Node":       return "test";
+            case "Crop":            return "crop";
+            case "Resize":          return "resize";
             case "Composite":       return "composite";
             case "Chroma Key":      return "chromakey";
+            case "Rectangle":       return "rectangle";
+            case "Ellipse":         return "ellipse";
+            case "Test Node":       return "test";
             default: return null;
         }
     }
@@ -75,6 +81,8 @@ public abstract class NodeFactory {
             buildNodeMenuItem("resize",         "Resize"),
             buildNodeMenuItem("composite",      "Composite"),
             buildNodeMenuItem("chromakey",      "Chroma Key"),
+            buildNodeMenuItem("rectangle",      "Rectangle"),
+            buildNodeMenuItem("ellipse",        "Ellipse"),
             buildNodeMenuItem("test",           "Test")
         );
 
