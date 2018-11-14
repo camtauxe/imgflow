@@ -157,7 +157,8 @@ public class Viewport {
         // Second column is of a fixed width
         ColumnConstraints column2 = new ColumnConstraints();
         column2.setPrefWidth(25.0);
-        pane.getColumnConstraints().addAll(column1, column2);
+        // TODO: Add columns/rows for buttons to the side of viewport
+        pane.getColumnConstraints().addAll(column1/*, column2*/);
 
         // Set rows on the GridPane
         // First row expands to fill space
@@ -166,7 +167,7 @@ public class Viewport {
         // Second row is of a fixed height
         RowConstraints row2 = new RowConstraints();
         row2.setPrefHeight(25.0);
-        pane.getRowConstraints().addAll(row1, row2);
+        pane.getRowConstraints().addAll(row1/*, row2*/);
 
         // Create a Pane which will contain the canvas
         Pane canvasWrapper = new Pane();
@@ -194,7 +195,7 @@ public class Viewport {
         GraphicsContext ctx = canvas.getGraphicsContext2D();
 
         // Fill background
-        ctx.setFill(Color.LIGHTGRAY);
+        ctx.setFill(Color.web("#333333"));
         ctx.fillRect(0.0, 0.0, canvas.getWidth(), canvas.getHeight());
 
         // Transform context to draw in graph units
@@ -209,7 +210,7 @@ public class Viewport {
         // Draw connecting line if a connection is being drawn
         if (connectingSocket != null) {
             ctx.setLineWidth(pixelsToGraphUnits(2.5));
-            ctx.setStroke(Color.ORANGE);
+            ctx.setStroke(Color.DARKBLUE);
             Point2D fromPos = connectingSocket.getConnectingPosition().add(connectingSocket.getParentNode().getPosition());
             ctx.strokeLine(fromPos.getX(), fromPos.getY(), connectingPoint.getX(), connectingPoint.getY());
         }

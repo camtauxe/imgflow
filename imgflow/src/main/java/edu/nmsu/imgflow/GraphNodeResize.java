@@ -5,6 +5,8 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.PixelReader;
+import javafx.scene.control.Spinner;
+
 
 /**
  * A type of graph node that inverts the colors of an image
@@ -20,8 +22,8 @@ public class GraphNodeResize extends GraphNode {
 
     public GraphNodeResize() {
 
-        newWidthSpinner = new NodePropertySpinner(this, "Width", 0, 100, 100);
-        newHeightSpinner = new NodePropertySpinner(this, "Height", 0, 100, 100);
+        newWidthSpinner = new NodePropertySpinner(this, "Width", 1, 4500, 100, Spinner.STYLE_CLASS_SPLIT_ARROWS_HORIZONTAL);
+        newHeightSpinner = new NodePropertySpinner(this, "Height", 1, 4500, 100);
 
         properties.add(newWidthSpinner);
         properties.add(newHeightSpinner);
@@ -58,13 +60,14 @@ public class GraphNodeResize extends GraphNode {
         WritableImage   outImg = new WritableImage(newWidth, newHeight);
         PixelWriter     writer = outImg.getPixelWriter();
 
-        int widthScale = (int)inImg.getWidth() / newWidth;
-        int heightScale = (int)inImg.getHeight() / newHeight;
+        //create a scale that will be used to map the pixels to the new image
+        double widthScale = inImg.getWidth() / newWidth;
+        double heightScale = inImg.getHeight() / newHeight;
 
         // Selectively move pixels from input to output based on a scale
         for (int x = 0; x < newWidth; x++) {
             for (int y = 0; y < newHeight; y++) {
-                Color inColor = reader.getColor(x * widthScale, y * heightScale);
+                Color inColor = reader.getColor( (int)(x * widthScale) ,(int)( y * heightScale) );
                 writer.setColor(x, y, inColor);
             }
         }
@@ -73,15 +76,18 @@ public class GraphNodeResize extends GraphNode {
         out.setImage(outImg);
     }
     
-    //overide the function to dynamically update the max value of the 
-    //spinner based on the dimensions of the input image
-    public void onInputUpdate(NodeSocketInput socket) {
-        super.onInputUpdate(socket);
-        in.requestUpdate();
-        if(in.getImage() != null){
-            newWidthSpinner.updateSpinnerMax( (int) in.getImage().getWidth() );
-            newHeightSpinner.updateSpinnerMax( (int) in.getImage().getHeight() );
-        }
-    }
+
+    //moved to static value spinners as dynamic updating was causing performance issues 
+
+    // //overide the function to dynamically update the max value of the 
+    // //spinner based on the dimensions of the input image
+    // public void onInputUpdate(NodeSocketInput socket) {
+    //     super.onInputUpdate(socket);
+    //     in.requestUpdate();
+    //     if(in.getImage() != null){
+    //         newWidthSpinner.updateSpinnerMax( (int) in.getImage().getWidth() );
+    //         newHeightSpinner.updateSpinnerMax( (int) in.getImage().getHeight() );
+    //     }
+    // }
 
 }

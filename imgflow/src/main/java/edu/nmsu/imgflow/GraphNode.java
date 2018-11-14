@@ -54,7 +54,7 @@ public abstract class GraphNode {
     // This is the position relative to the top-left corner of the node that corresponds
     // to the beginning of the baseline for the node title text
     public static final Point2D NODE_TITLE_POS = new Point2D(NODE_ROW_PADDING, NODE_ROW_HEIGHT - NODE_ROW_PADDING);
-    public static final double  NODE_TITLE_SIZE = 0.3;
+    public static final double  NODE_TITLE_SIZE = 0.2;
 
 
     // ################################
@@ -261,7 +261,7 @@ public abstract class GraphNode {
         double cursorY      = 0.0;
 
         // Draw header
-        ctx.setFill(Color.LIMEGREEN);
+        ctx.setFill(Color.web("#439be8"));
         ctx.fillRect(0.0, cursorY, NODE_WIDTH, NODE_ROW_HEIGHT);
         cursorY += NODE_ROW_HEIGHT;
 
@@ -284,14 +284,14 @@ public abstract class GraphNode {
         int rowsToDraw   = Math.max(getNumInputSockets(), getNumOutputSockets());
         for (int i = 0; i < rowsToDraw; i++) {
             // alternate between different shades for background color
-            ctx.setFill(i % 2 == 0 ? Color.web("black",0.8) : Color.web("black",0.7));
+            ctx.setFill(i % 2 == 0 ? Color.web("black",0.6) : Color.web("black",0.5));
             ctx.fillRect(0.0, cursorY, NODE_WIDTH, NODE_ROW_HEIGHT);
             cursorY += NODE_ROW_HEIGHT;
         }
 
         // Draw sockets
-        ctx.setFill(Color.YELLOW);
-        ctx.setStroke(Color.YELLOW);
+        ctx.setFill(Color.web("#5dc9ea"));
+        ctx.setStroke(Color.web("#85d8f2"));
         ctx.setLineWidth(viewport.pixelsToGraphUnits(2.5));
         for (NodeSocket socket : allSockets) {
             ctx.fillRect(socket.getPosition().getX(), socket.getPosition().getY(), NODE_SOCKET_SIZE, NODE_SOCKET_SIZE);
