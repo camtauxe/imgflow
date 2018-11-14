@@ -99,7 +99,7 @@ public class Main extends Application {
         // Build scene with the result of createMainWindow() as
         // the root node, and add to stage.
         scene = new Scene(createMainWindow());
-        scene.getStylesheets().add("resources/main.css");
+        scene.getStylesheets().add("main.css");
         stage.setScene(scene);
 
         // Set sizing for stage
