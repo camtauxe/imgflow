@@ -168,7 +168,11 @@ public class Main extends Application {
                 propertyPanel.updateSelectedNode(null);
             }
         });
-        fileMenu.getItems().addAll(save, load);
+        MenuItem batch = new MenuItem("Batch Process");
+        batch.setOnAction((actionEvent) -> {
+            BatchProcess.showDialog();
+        });
+        fileMenu.getItems().addAll(save, load, batch);
         // Add node creation menu
         Menu createMenu = NodeFactory.buildNodeCreationMenu();
         // Add menus to menu bar
