@@ -30,6 +30,8 @@ public class BatchProcess {
      */
     private static FileChooser fileChooser;
 
+    private static DirectoryChooser dirChooser;
+
     private static Stage window;
 
     public static void showDialog() {
@@ -92,7 +94,20 @@ public class BatchProcess {
         Label inputNodeLabel = new Label("Select Input Node");
         ComboBox<GraphNode> inputSelect = createNodeComboBox(fileInNodes);
         inputBox.getChildren().addAll(inputFilesLabel, inputFilesBrowse, inputNodeLabel, inputSelect);
+        grid.add(inputBox, 0, 2);
 
+        VBox outputBox = new VBox(10.0);
+        Label outputDirLabel = new Label("Select Output Directory");
+        Button outputDirBrowse = new Button("Browse...");
+        outputDirBrowse.setOnAction((actionEvent) -> {
+            if (dirChooser == null)
+                initDirChooser();
+            dirChooser.showDialog(window);
+        });
+        Label outputNodeLabel = new Label("Select Output Node");
+        ComboBox<GraphNode> outputSelect = createNodeComboBox(fileOutNodes);
+        outputBox.getChildren().addAll(outputDirLabel, outputDirBrowse, outputNodeLabel, outputSelect);
+        grid.add(outputBox, 1, 2);
 
         return grid;
     }
@@ -103,29 +118,40 @@ public class BatchProcess {
      */
     private static void initFileChooser() {
         fileChooser = new FileChooser();
-        fileChooser.setTitle("Imgflow Graph");
+        fileChooser.setTitle("Input Files");
         fileChooser.getExtensionFilters().add(
             new ExtensionFilter("Image files", "*.png", "*.jpeg", "*.jpg", "*.bmp", "*.gif")
         );
     }
 
+    private static void initDirChooser() {
+        dirChooser = new DirectoryChooser();
+        dirChooser.setTitle("Output Directory");
+    }
+
     private static ComboBox<GraphNode> createNodeComboBox(ArrayList<GraphNode> nodes) {
         ComboBox<GraphNode> cmb = new ComboBox<GraphNode>();
+        cmb.getItems().addAll(nodes);
 
         cmb.setCellFactory(new Callback<ListView<GraphNode>, ListCell<GraphNode>>() {
             public ListCell<GraphNode> call(ListView<GraphNode> list) {
-                return new ListCell<GraphNode>() {
-                    protected void updateItem(GraphNode item, boolean empty) {
-                        if (!empty && item != null) {
-                            setText(item.getName());
-                        }
-                    }
-                };
+                return new GraphNodeCell();
             }
         });
+        cmb.setButtonCell(new GraphNodeCell());
 
-        cmb.getItems().addAll(nodes);
+        if (nodes.size() > 0)
+            cmb.getSelectionModel().select(0);
 
         return cmb;
+    }
+
+    private static class GraphNodeCell extends ListCell<GraphNode> {
+        protected void updateItem(GraphNode item, boolean empty) {
+            if (!empty && item != null) {
+                setText(item.getName());
+            }
+            super.updateItem(item, empty);
+        }
     }
 }
