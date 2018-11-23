@@ -61,23 +61,27 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
         vbox.getChildren().addAll(label, loadButton);
 
         loadButton.setOnAction((actionEvent) -> {
-            try {
-                File file = chooser.showOpenDialog(Main.getInstance().getStage());
-                String url = file.toURI().toURL().toExternalForm();
-                Image img = new Image(url);
-                if (img.isError())
-                    throw img.getException();
-                value = new WritableImage(img.getPixelReader(), (int)img.getWidth(), (int)img.getHeight());
-                System.out.println("Successfully loaded image!");
-            } catch (Exception e) {
-                System.out.println("Error loading image!");
-                System.out.println(e.getClass() + " : " + e.getMessage());
-                value = null;
-            } finally {
-                parentNode.onPropertyUpdate(this);
-            }
+            loadFile(chooser.showOpenDialog(Main.getInstance().getStage()));
         });
 
         GUIContent = vbox;
+    }
+
+    public void loadFile(File file) {
+        try {
+            String url = file.toURI().toURL().toExternalForm();
+            Image img = new Image(url);
+            if (img.isError())
+                throw img.getException();
+            value = new WritableImage(img.getPixelReader(), (int)img.getWidth(), (int)img.getHeight());
+            System.out.println("Successfully loaded image!");
+        } catch (Exception e) {
+            System.out.println("Error loading image!");
+            System.out.println(e.getClass() + " : " + e.getMessage());
+            value = null;
+        } finally {
+            parentNode.onPropertyUpdate(this);
+        }
+
     }
 }
