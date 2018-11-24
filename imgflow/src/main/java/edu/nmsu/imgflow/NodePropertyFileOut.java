@@ -69,6 +69,10 @@ public class NodePropertyFileOut extends NodeProperty<WritableImage> {
         GUIContent = vbox;
     }
 
+    /**
+     * Save the parent node's input image to the given
+     * file.
+     */
     public void saveToFile(File file) {
         GraphNodeFileOut node = (GraphNodeFileOut)parentNode;
         node.getInputSocket().requestUpdate();

@@ -24,6 +24,9 @@ public class GraphNodeFileOut extends GraphNode {
 
     public int getNumOutputSockets() {return 0; }
 
+    /**
+     * Save the node's input image to the given file
+     */
     public void saveToFile(File file) {
         prop.saveToFile(file);
     }

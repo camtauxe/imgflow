@@ -67,6 +67,11 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
         GUIContent = vbox;
     }
 
+    /**
+     * Load the given file and update the parent node.
+     * If an error occurs loading the file, the value will be
+     * updated to null
+     */
     public void loadFile(File file) {
         try {
             String url = file.toURI().toURL().toExternalForm();

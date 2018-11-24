@@ -26,6 +26,11 @@ public class GraphNodeFileIn extends GraphNode {
         socket.setImage(prop.getValue());
     }
 
+    /**
+     * Load the given file and send to the output socket.
+     * If an error occurs loading the image, the new output
+     * will be null
+     */
     public void loadFile(File file) {
         prop.loadFile(file);
     }
