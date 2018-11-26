@@ -28,6 +28,10 @@ public class GraphNodeRectangle extends GraphNode {
 
     public int getNumInputSockets() { return 0; }
 
+    public String getDescription() {
+        return "Create a rectangle and send it the to output.";
+    }
+
     /**
      * Override processImage to fill a new image with
      * the selected Color

@@ -22,6 +22,10 @@ public class GraphNodeFileIn extends GraphNode {
 
     public int getNumInputSockets() {return 0; }
 
+    public String getDescription() {
+        return "Load an image from a file and send it to the output.";
+    }
+
     public void processImage() {
         socket.setImage(prop.getValue());
     }
