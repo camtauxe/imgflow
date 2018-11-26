@@ -32,6 +32,8 @@ public class GraphNodeCrop extends GraphNode {
 
     public String getBaseName() { return "Crop"; }
 
+    public String getDescription() { return "Fill in body text"; }
+
     /**
      * Override processImage to crop the input image
      * and send it to the output.
