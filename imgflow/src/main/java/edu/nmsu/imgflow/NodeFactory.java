@@ -2,6 +2,7 @@ package edu.nmsu.imgflow;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.geometry.Point2D;
 
 /**
  * Abstract class for the creation of new GraphNodes
@@ -91,15 +92,19 @@ public abstract class NodeFactory {
 
     /**
      * Create a MenuItem that creates a node of the given type when
-     * selected and adds it to the active graph.
+     * selected and adds it to the active graph. The position of the
+     * new node will be in the center of the viewport
      */
     private static MenuItem buildNodeMenuItem(String type, String name) {
         MenuItem item = new MenuItem(name);
 
         item.setOnAction((actionEvent) -> {
             GraphNode node = createNode(type);
-            if (node != null)
+            if (node != null) {
+                Point2D center = Main.getInstance().getViewport().getViewportCenter();
+                node.setPosition(center);
                 Main.getInstance().getActiveGraph().getNodes().add(node);
+            }
         });
 
         return item;

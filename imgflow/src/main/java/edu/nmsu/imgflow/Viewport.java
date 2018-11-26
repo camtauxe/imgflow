@@ -361,8 +361,6 @@ public class Viewport {
             if (newZoom > MAX_ZOOM) newZoom = MAX_ZOOM;
             if (newZoom < MIN_ZOOM) newZoom = MIN_ZOOM;
             viewportZoom = newZoom;
-
-            // TODO: Adjust viewportCenter so that zoom occurs centered around mouse location
         });
     }
 
@@ -507,6 +505,11 @@ public class Viewport {
      * being hovered over in the viewport
      */
     public HoverQuery getHoverQuery() { return hoverQuery; }
+
+    /**
+     * Get the point (in graph-units) currently in the center of the viewport
+     */
+    public Point2D getViewportCenter() { return viewportCenter; }
 
     /**
      * Set the graph displayed in the viewport to a new graph.
