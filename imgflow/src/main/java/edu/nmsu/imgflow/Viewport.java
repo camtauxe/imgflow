@@ -157,7 +157,6 @@ public class Viewport {
         // Second column is of a fixed width
         ColumnConstraints column2 = new ColumnConstraints();
         column2.setPrefWidth(25.0);
-        // TODO: Add columns/rows for buttons to the side of viewport
         pane.getColumnConstraints().addAll(column1/*, column2*/);
 
         // Set rows on the GridPane

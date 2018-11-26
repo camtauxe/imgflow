@@ -41,8 +41,6 @@ public class GraphNodeMatte extends GraphNode {
             return;
         }
 
-        // TODO: Consider making it so that the image passes through unaltered when the matte is null
-
         int width   = (int)baseImage.getWidth();
         int height  = (int)baseImage.getHeight();
         int matteWidth  = (int)matteImage.getWidth();
