@@ -66,9 +66,11 @@ public class PropertyPanel {
         vbox.getChildren().add(previewWrapper);
         // Create preview ImageView
         preview = new ImageView();
+        preview.getStyleClass().add("preview-img");
         preview.setPreserveRatio(true);
         // Bind ImageView size to wrapper
         preview.fitWidthProperty().bind(previewWrapper.widthProperty());
+        preview.fitHeightProperty().bind(preview.fitWidthProperty());
         previewWrapper.getChildren().add(preview);
 
         nodeLabel = new Label("");
@@ -121,22 +123,28 @@ public class PropertyPanel {
         propertyBox.getChildren().clear();
 
         if (selectedNode == null) {
+            setUIEnabled(false);
             preview.setImage(null);
-            nodeLabel.setVisible(false);
             propertyBox.getChildren().add(labelWrapper);
-            deleteNodeButton.setDisable(true);
-            deleteNodeButton.setVisible(false);
         } else {
+            setUIEnabled(true);
             nodeLabel.setText(newSelection.getBaseName());
-            nodeLabel.setVisible(true);
-            deleteNodeButton.setDisable(false);
-            deleteNodeButton.setVisible(true);
             for (NodeProperty<?> prop : selectedNode.properties)
                 propertyBox.getChildren().add(prop.getGUIContent());
             // Update preivew image
             selectedNode.update();
             refreshPreview();
         }
+    }
+
+    private void setUIEnabled(boolean enabled) {
+        preview.setVisible(enabled);
+        preview.setManaged(enabled);
+        nodeLabel.setVisible(enabled);
+        nodeLabel.setManaged(enabled);
+        deleteNodeButton.setVisible(enabled);
+        deleteNodeButton.setManaged(enabled);
+        deleteNodeButton.setDisable(!enabled);
     }
 
     /**

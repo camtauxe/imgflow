@@ -23,3 +23,7 @@
     -fx-font-weight: bold;
     -fx-font-size: 14pt;
 }
+
+.preview-img {
+    -fx-background-color: #666666;
+}
