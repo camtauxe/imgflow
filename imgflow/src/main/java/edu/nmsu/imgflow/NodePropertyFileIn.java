@@ -18,6 +18,7 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
     // GUI Components
     private VBox        vbox;
     private Label       label;
+    private Label       readout;
     private Button      loadButton;
     
     private FileChooser chooser;
@@ -57,27 +58,42 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
         vbox        = new VBox(5.0);
         label       = new Label("File input");
         loadButton  = new Button("Load");
+        readout     = new Label("No file loaded");
 
-        vbox.getChildren().addAll(label, loadButton);
+        vbox.getChildren().addAll(label, loadButton, readout);
 
         loadButton.setOnAction((actionEvent) -> {
-            try {
-                File file = chooser.showOpenDialog(Main.getInstance().getStage());
-                String url = file.toURI().toURL().toExternalForm();
-                Image img = new Image(url);
-                if (img.isError())
-                    throw img.getException();
-                value = new WritableImage(img.getPixelReader(), (int)img.getWidth(), (int)img.getHeight());
-                System.out.println("Successfully loaded image!");
-            } catch (Exception e) {
-                System.out.println("Error loading image!");
-                System.out.println(e.getClass() + " : " + e.getMessage());
-                value = null;
-            } finally {
-                parentNode.onPropertyUpdate(this);
-            }
+            loadFile(chooser.showOpenDialog(Main.getInstance().getStage()));
         });
 
         GUIContent = vbox;
+    }
+
+    /**
+     * Load the given file and update the parent node.
+     * If an error occurs loading the file, the value will be
+     * updated to null
+     */
+    public void loadFile(File file) {
+        if (file == null) {
+            readout.setText("No file loaded");
+            value = null;
+        }
+        try {
+            String url = file.toURI().toURL().toExternalForm();
+            Image img = new Image(url);
+            if (img.isError())
+                throw img.getException();
+            value = new WritableImage(img.getPixelReader(), (int)img.getWidth(), (int)img.getHeight());
+            System.out.println("Successfully loaded image!");
+            readout.setText(file.getName());
+        } catch (Exception e) {
+            System.out.println("Error loading image!");
+            System.out.println(e.getClass() + " : " + e.getMessage());
+            value = null;
+        } finally {
+            parentNode.onPropertyUpdate(this);
+        }
+
     }
 }
