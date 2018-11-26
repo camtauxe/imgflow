@@ -63,26 +63,32 @@ public class NodePropertyFileOut extends NodeProperty<WritableImage> {
         vbox.getChildren().addAll(label, saveButton);
 
         saveButton.setOnAction((actionEvent) -> {
-            GraphNodeFileOut node = (GraphNodeFileOut)parentNode;
-            node.getInputSocket().requestUpdate();
-            WritableImage img = node.getInputSocket().getImage();
-            if (img == null) {
-                System.out.println("No input image available! Unable to save image!");
-            }
-            else {
-                RenderedImage rendered = SwingFXUtils.fromFXImage(img, null);
-                File file = chooser.showSaveDialog(Main.getInstance().getStage());
-                try {
-                    ImageIO.write(rendered, "png", file);
-                    System.out.println("Succesfully saved image!");
-                } catch (Exception e) {
-                    System.out.println("Error saving file!");
-                    System.out.println(e.getMessage());
-                }
-            }
-
+            saveToFile(chooser.showSaveDialog(Main.getInstance().getStage()));
         });
 
         GUIContent = vbox;
+    }
+
+    /**
+     * Save the parent node's input image to the given
+     * file.
+     */
+    public void saveToFile(File file) {
+        GraphNodeFileOut node = (GraphNodeFileOut)parentNode;
+        node.getInputSocket().requestUpdate();
+        WritableImage img = node.getInputSocket().getImage();
+        if (img == null) {
+            System.out.println("No input image available! Unable to save image!");
+        }
+        else {
+            RenderedImage rendered = SwingFXUtils.fromFXImage(img, null);
+            try {
+                ImageIO.write(rendered, "png", file);
+                System.out.println("Succesfully saved image!");
+            } catch (Exception e) {
+                System.out.println("Error saving file!");
+                System.out.println(e.getMessage());
+            }
+        }
     }
 }

@@ -1,0 +1,31 @@
+.root {
+    -fx-base: #222222;
+}
+
+.menu-bar {
+    -fx-background-color: #333333;
+}
+
+.context-menu {
+    -fx-background-color: #444444;
+}
+
+.control-box,
+.property-box {
+    -fx-border-width: 3px;
+    -fx-border-color: #555555;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-background-color: #333333;
+}
+
+.bold-label,
+.no-selection-label,
+.node-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14pt;
+}
+
+.preview-img {
+    -fx-background-color: #666666;
+}

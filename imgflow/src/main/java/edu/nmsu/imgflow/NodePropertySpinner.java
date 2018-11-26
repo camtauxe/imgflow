@@ -36,6 +36,10 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
      * The default/starting value of the spinner
      */
     private int     spinnerInitialValue;
+    /**
+     * The style of the spinner
+     */
+    private String  style = "";
 
     /**
      * The change listener used to respond to changes in the spinner.
@@ -74,6 +78,28 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
         buildGUI();
     }
 
+    //overload constructor to allow for styling
+    public NodePropertySpinner(GraphNode parent, String name, int min, int max, int defaultValue, String inputStyle) {
+        super(parent);
+        this.name = name;
+        spinnerMin = min;
+        spinnerMax = max;
+
+        style = inputStyle;        
+
+        // Clamp default value to be within min and max
+        if(defaultValue <= spinnerMax && defaultValue >= spinnerMin)
+            spinnerInitialValue = defaultValue;
+        else if(defaultValue < spinnerMin)
+            spinnerInitialValue = spinnerMin;
+        else
+            spinnerInitialValue = spinnerMax;
+
+        value = spinnerInitialValue;
+
+        buildGUI();
+    }
+
     /**
      * Build the property's GUI content
      */
@@ -85,6 +111,7 @@ public class NodePropertySpinner extends NodeProperty<Integer> {
         spinner  = new Spinner<Integer>(valueFactory);
 
         spinner.setEditable(true);
+        spinner.getStyleClass().add(style);
         
         //allows the spinner to be circular
         valueFactory.setWrapAround(true);
