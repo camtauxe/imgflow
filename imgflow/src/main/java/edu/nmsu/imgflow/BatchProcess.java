@@ -98,6 +98,7 @@ public abstract class BatchProcess {
         scene.getStylesheets().add("main.css");
         window.setScene(scene);
         window.sizeToScene();
+        window.setResizable(false);
 
         window.showAndWait();
     }
@@ -155,12 +156,17 @@ public abstract class BatchProcess {
         inputBox.getStyleClass().add("control-box");
         inputBox.setPadding(new Insets(8.0));
         Label inputFilesLabel = new Label("Select Input files");
+        Label inputFilesReadout = new Label("No files selected");
         // Add browse button to summon fileChooser
         Button inputFilesBrowse = new Button("Browse...");
         inputFilesBrowse.setOnAction((actionEvent) -> {
             if (fileChooser == null)
                 initFileChooser();
             inputFiles = fileChooser.showOpenMultipleDialog(window);
+            if (inputFiles == null)
+                inputFilesReadout.setText("No files selected");
+            else
+                inputFilesReadout.setText(inputFiles.size() + " file(s) selected");
         });
         Label inputNodeLabel = new Label("Select Input Node");
         // Create combobox from list of File IN nodes
@@ -171,7 +177,7 @@ public abstract class BatchProcess {
         // Select first node in the list (if there is one)
         if (fileInNodes.size() > 0)
             inputNode = fileInNodes.get(0);
-        inputBox.getChildren().addAll(inputFilesLabel, inputFilesBrowse, inputNodeLabel, inputSelect);
+        inputBox.getChildren().addAll(inputFilesLabel, inputFilesBrowse, inputFilesReadout, inputNodeLabel, inputSelect);
         grid.add(inputBox, 0, 2);
 
         // Create and add the VBox containing all the output options
@@ -179,12 +185,17 @@ public abstract class BatchProcess {
         outputBox.setPadding(new Insets(8.0));
         outputBox.getStyleClass().add("control-box");
         Label outputDirLabel = new Label("Select Output Directory");
+        Label outputDirReadout = new Label("No directory selected");
         // Add browse button to summon dirChooser
         Button outputDirBrowse = new Button("Browse...");
         outputDirBrowse.setOnAction((actionEvent) -> {
             if (dirChooser == null)
                 initDirChooser();
             outputDir = dirChooser.showDialog(window);
+            if (outputDir == null)
+                outputDirReadout.setText("No directory selected");
+            else
+                outputDirReadout.setText(outputDir.getName());
         });
         Label outputNodeLabel = new Label("Select Output Node");
         // Create combobox from list of File OUT nodes
@@ -195,7 +206,7 @@ public abstract class BatchProcess {
         // Select first node in the list (if there is one)
         if (fileOutNodes.size() > 0)
             outputNode = fileOutNodes.get(0);
-        outputBox.getChildren().addAll(outputDirLabel, outputDirBrowse, outputNodeLabel, outputSelect);
+        outputBox.getChildren().addAll(outputDirLabel, outputDirBrowse, outputDirReadout, outputNodeLabel, outputSelect);
         grid.add(outputBox, 1, 2);
 
         // Create and add process button

@@ -18,6 +18,7 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
     // GUI Components
     private VBox        vbox;
     private Label       label;
+    private Label       readout;
     private Button      loadButton;
     
     private FileChooser chooser;
@@ -57,8 +58,9 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
         vbox        = new VBox(5.0);
         label       = new Label("File input");
         loadButton  = new Button("Load");
+        readout     = new Label("No file loaded");
 
-        vbox.getChildren().addAll(label, loadButton);
+        vbox.getChildren().addAll(label, loadButton, readout);
 
         loadButton.setOnAction((actionEvent) -> {
             loadFile(chooser.showOpenDialog(Main.getInstance().getStage()));
@@ -73,6 +75,10 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
      * updated to null
      */
     public void loadFile(File file) {
+        if (file == null) {
+            readout.setText("No file loaded");
+            value = null;
+        }
         try {
             String url = file.toURI().toURL().toExternalForm();
             Image img = new Image(url);
@@ -80,6 +86,7 @@ public class NodePropertyFileIn extends NodeProperty<WritableImage> {
                 throw img.getException();
             value = new WritableImage(img.getPixelReader(), (int)img.getWidth(), (int)img.getHeight());
             System.out.println("Successfully loaded image!");
+            readout.setText(file.getName());
         } catch (Exception e) {
             System.out.println("Error loading image!");
             System.out.println(e.getClass() + " : " + e.getMessage());
