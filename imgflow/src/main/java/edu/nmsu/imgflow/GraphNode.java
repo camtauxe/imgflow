@@ -158,6 +158,11 @@ public abstract class GraphNode {
     public int getNumOutputSockets() { return 1; }
 
     /**
+     * Get a description describing how to use this node
+     */
+    public String getDescription() { return "No description available"; }
+
+    /**
      * Get the socket whose image this node uses to draw its thumbnail preview.
      * By default, this will be the first output socket (or input socket if there
      * are no outputs), but other nodes may override it. This can also be null

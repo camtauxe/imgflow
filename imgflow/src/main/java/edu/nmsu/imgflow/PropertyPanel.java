@@ -53,6 +53,10 @@ public class PropertyPanel {
      * The currently selected node. Null if no node is selected.
      */
     private GraphNode selectedNode;
+    /**
+     * Label displaying the description for the currently selected node.
+     */
+    private Label descriptionLabel;
 
     /**
      * Construct a new PropertyPanel with no selected node
@@ -66,9 +70,11 @@ public class PropertyPanel {
         vbox.getChildren().add(previewWrapper);
         // Create preview ImageView
         preview = new ImageView();
+        preview.getStyleClass().add("preview-img");
         preview.setPreserveRatio(true);
         // Bind ImageView size to wrapper
         preview.fitWidthProperty().bind(previewWrapper.widthProperty());
+        preview.fitHeightProperty().bind(preview.fitWidthProperty());
         previewWrapper.getChildren().add(preview);
 
         nodeLabel = new Label("");
@@ -90,6 +96,9 @@ public class PropertyPanel {
         propertyBox.getStyleClass().add("property-box");
         VBox.setVgrow(propertyBox, Priority.ALWAYS);
         vbox.getChildren().add(propertyBox);
+
+        descriptionLabel = new Label();
+        descriptionLabel.setWrapText(true);
 
         deleteNodeButton = new Button("Delete Node");
         deleteNodeButton.setOnAction((actionEvent) -> {
@@ -121,22 +130,30 @@ public class PropertyPanel {
         propertyBox.getChildren().clear();
 
         if (selectedNode == null) {
+            setUIEnabled(false);
             preview.setImage(null);
-            nodeLabel.setVisible(false);
             propertyBox.getChildren().add(labelWrapper);
-            deleteNodeButton.setDisable(true);
-            deleteNodeButton.setVisible(false);
         } else {
+            setUIEnabled(true);
             nodeLabel.setText(newSelection.getBaseName());
-            nodeLabel.setVisible(true);
-            deleteNodeButton.setDisable(false);
-            deleteNodeButton.setVisible(true);
             for (NodeProperty<?> prop : selectedNode.properties)
                 propertyBox.getChildren().add(prop.getGUIContent());
+            descriptionLabel.setText(newSelection.getDescription());
+            propertyBox.getChildren().add(descriptionLabel);
             // Update preivew image
             selectedNode.update();
             refreshPreview();
         }
+    }
+
+    private void setUIEnabled(boolean enabled) {
+        preview.setVisible(enabled);
+        preview.setManaged(enabled);
+        nodeLabel.setVisible(enabled);
+        nodeLabel.setManaged(enabled);
+        deleteNodeButton.setVisible(enabled);
+        deleteNodeButton.setManaged(enabled);
+        deleteNodeButton.setDisable(!enabled);
     }
 
     /**
