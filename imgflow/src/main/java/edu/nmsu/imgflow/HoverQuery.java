@@ -86,8 +86,6 @@ public class HoverQuery {
                         overSocket = true;
                     }
                 } // end for sockets
-                // If we've found an overlapping node, break because we're done
-                break;
             } // end if hovering
         } // end for nodes
     }

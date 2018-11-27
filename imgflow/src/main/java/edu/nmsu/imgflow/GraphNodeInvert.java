@@ -21,6 +21,10 @@ public class GraphNodeInvert extends GraphNode {
 
     public String getBaseName() { return "Invert"; }
 
+    public String getDescription() {
+        return "Invert the colors of an image.";
+    }
+
     /**
      * Override processImage to invert the colors of the input image
      * and send it to the output.

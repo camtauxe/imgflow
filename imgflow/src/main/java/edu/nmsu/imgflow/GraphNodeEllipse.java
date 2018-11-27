@@ -35,6 +35,10 @@ public class GraphNodeEllipse extends GraphNode {
 
     public int getNumInputSockets() { return 0; }
 
+    public String getDescription() {
+        return "Create an ellipse and send it the output.";
+    }
+
     /**
      * Override processImage to create the ellipse
      */

@@ -53,6 +53,10 @@ public class PropertyPanel {
      * The currently selected node. Null if no node is selected.
      */
     private GraphNode selectedNode;
+    /**
+     * Label displaying the description for the currently selected node.
+     */
+    private Label descriptionLabel;
 
     /**
      * Construct a new PropertyPanel with no selected node
@@ -93,6 +97,9 @@ public class PropertyPanel {
         VBox.setVgrow(propertyBox, Priority.ALWAYS);
         vbox.getChildren().add(propertyBox);
 
+        descriptionLabel = new Label();
+        descriptionLabel.setWrapText(true);
+
         deleteNodeButton = new Button("Delete Node");
         deleteNodeButton.setOnAction((actionEvent) -> {
             if (selectedNode == null) return;
@@ -131,6 +138,8 @@ public class PropertyPanel {
             nodeLabel.setText(newSelection.getBaseName());
             for (NodeProperty<?> prop : selectedNode.properties)
                 propertyBox.getChildren().add(prop.getGUIContent());
+            descriptionLabel.setText(newSelection.getDescription());
+            propertyBox.getChildren().add(descriptionLabel);
             // Update preivew image
             selectedNode.update();
             refreshPreview();

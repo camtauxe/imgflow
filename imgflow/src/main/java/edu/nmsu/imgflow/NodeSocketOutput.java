@@ -59,7 +59,6 @@ public class NodeSocketOutput extends NodeSocket {
             if (inputSocket.getConnectingSocket() != this)
                 inputSocket.connect(this);
         }
-        // TODO: If unable to connect, generate some kind of error so the user knows why this failed
     }
 
     /**
