@@ -10,8 +10,7 @@
     -fx-background-color: #444444;
 }
 
-.control-box,
-.property-box {
+.control-box {
     -fx-border-width: 3px;
     -fx-border-color: #555555;
     -fx-border-radius: 10px;
@@ -29,3 +28,11 @@
 .preview-img {
     -fx-background-color: #666666;
 }
+
+.property-scroll {
+    -fx-background-color: transparent;
+}
+
+.property-scroll > .viewport {
+    -fx-background-color: transparent;
+ }
