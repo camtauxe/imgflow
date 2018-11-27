@@ -32,6 +32,8 @@ public abstract class NodeFactory {
             case "chromakey":       return new GraphNodeChromaKey();
             case "rectangle":       return new GraphNodeRectangle();
             case "ellipse":         return new GraphNodeEllipse();
+            case "flip":            return new GraphNodeFlip();
+            case "rotate":          return new GraphNodeRotate();
             case "test":            return new GraphNodeTest();
             default: return null;
         }
@@ -57,6 +59,8 @@ public abstract class NodeFactory {
             case "Chroma Key":      return "chromakey";
             case "Rectangle":       return "rectangle";
             case "Ellipse":         return "ellipse";
+            case "Flip":            return "flip";
+            case "Rotate":          return "rotate";
             case "Test Node":       return "test";
             default: return null;
         }
@@ -84,6 +88,8 @@ public abstract class NodeFactory {
             buildNodeMenuItem("chromakey",      "Chroma Key"),
             buildNodeMenuItem("rectangle",      "Rectangle"),
             buildNodeMenuItem("ellipse",        "Ellipse"),
+            buildNodeMenuItem("flip",           "Flip"),
+            buildNodeMenuItem("rotate",         "Rotate"),
             buildNodeMenuItem("test",           "Test")
         );
 
