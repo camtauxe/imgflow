@@ -8,7 +8,7 @@ To build:
 
 To run:
 
-    java -jar target/imgflow-0.2-jar-with-dependencies.jar
+    java -jar target/imgflow-1.0-jar-with-dependencies.jar
 
 To clean:
 
