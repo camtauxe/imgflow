@@ -27,6 +27,13 @@ public class GraphNodeSplitColor extends GraphNode {
     
     public String getBaseName() { return "Split RGB"; }
     
+    public String getDescription() {
+        return "Split the input image into three color channels(RGB), which are, in order from top to bottom" +
+               "Red, Green, and Blue";
+    }
+    
+    public int getNumInputSockets() { return 1; }
+    public int getNumOutputSockets() { return 3; }
     /**
      * Override processImage to split the colors of the input image
      * and send it to the corresponding outputs.
@@ -81,7 +88,4 @@ public class GraphNodeSplitColor extends GraphNode {
       outG.setImage(gImg);
       outB.setImage(bImg);    
    }
-   
-    public int getNumInputSockets() { return 1; }
-    public int getNumOutputSockets() { return 3; }
 }

@@ -32,6 +32,9 @@ public class GraphNodeFlip extends GraphNode {
     public String getDescription() {
         return "Mirror an image horizontally, vertically or both";
     }
+    
+    public int getNumInputSockets()  { return 1; }
+    public int getNumOutputSockets() { return 1; }
 
     /**
      * Override processImage to reflect the image as specified
