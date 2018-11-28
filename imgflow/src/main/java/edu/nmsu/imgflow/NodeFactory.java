@@ -2,6 +2,7 @@ package edu.nmsu.imgflow;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.geometry.Point2D;
 
 /**
  * Abstract class for the creation of new GraphNodes
@@ -31,6 +32,8 @@ public abstract class NodeFactory {
             case "chromakey":       return new GraphNodeChromaKey();
             case "rectangle":       return new GraphNodeRectangle();
             case "ellipse":         return new GraphNodeEllipse();
+            case "flip":            return new GraphNodeFlip();
+            case "rotate":          return new GraphNodeRotate();
             case "test":            return new GraphNodeTest();
             default: return null;
         }
@@ -46,7 +49,7 @@ public abstract class NodeFactory {
             case "File OUT":        return "fileout";
             case "Invert":          return "invert";
             case "Color Effects":   return "coloreffects";
-            case "opacity":         return "Opacity";
+            case "Opacity":         return "opacity";
             case "Split RGB":       return "splitcolor";
             case "Join RGB":        return "joincolor";
             case "Matte":           return "matte";
@@ -56,6 +59,8 @@ public abstract class NodeFactory {
             case "Chroma Key":      return "chromakey";
             case "Rectangle":       return "rectangle";
             case "Ellipse":         return "ellipse";
+            case "Flip":            return "flip";
+            case "Rotate":          return "rotate";
             case "Test Node":       return "test";
             default: return null;
         }
@@ -71,19 +76,20 @@ public abstract class NodeFactory {
         menu.getItems().addAll(
             buildNodeMenuItem("filein",         "File IN"),
             buildNodeMenuItem("fileout",        "File OUT"),
+            buildNodeMenuItem("rectangle",      "Rectangle"),
+            buildNodeMenuItem("ellipse",        "Ellipse"),
             buildNodeMenuItem("invert",         "Invert Colors"),
             buildNodeMenuItem("coloreffects",   "Color Effects"),
             buildNodeMenuItem("opacity",        "Opacity"),
+            buildNodeMenuItem("chromakey",      "Chroma Key"),
             buildNodeMenuItem("splitcolor",     "Split RGB"),
             buildNodeMenuItem("joincolor",      "Join RBG"),
             buildNodeMenuItem("matte",          "Matte"),
+            buildNodeMenuItem("composite",      "Composite"),
             buildNodeMenuItem("crop",           "Crop"),
             buildNodeMenuItem("resize",         "Resize"),
-            buildNodeMenuItem("composite",      "Composite"),
-            buildNodeMenuItem("chromakey",      "Chroma Key"),
-            buildNodeMenuItem("rectangle",      "Rectangle"),
-            buildNodeMenuItem("ellipse",        "Ellipse"),
-            buildNodeMenuItem("test",           "Test")
+            buildNodeMenuItem("flip",           "Flip"),
+            buildNodeMenuItem("rotate",         "Rotate")
         );
 
         return menu;
@@ -91,15 +97,19 @@ public abstract class NodeFactory {
 
     /**
      * Create a MenuItem that creates a node of the given type when
-     * selected and adds it to the active graph.
+     * selected and adds it to the active graph. The position of the
+     * new node will be in the center of the viewport
      */
     private static MenuItem buildNodeMenuItem(String type, String name) {
         MenuItem item = new MenuItem(name);
 
         item.setOnAction((actionEvent) -> {
             GraphNode node = createNode(type);
-            if (node != null)
+            if (node != null) {
+                Point2D center = Main.getInstance().getViewport().getViewportCenter();
+                node.setPosition(center);
                 Main.getInstance().getActiveGraph().getNodes().add(node);
+            }
         });
 
         return item;

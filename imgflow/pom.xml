@@ -7,7 +7,7 @@
   <!-- Define the package name for the project -->
   <groupId>edu.nmsu.imgflow</groupId>
   <artifactId>imgflow</artifactId>
-  <version>0.2</version>
+  <version>1.0</version>
 
   <name>imgflow</name>
 

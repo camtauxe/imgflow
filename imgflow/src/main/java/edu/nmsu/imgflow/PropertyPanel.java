@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 
 /**
@@ -91,11 +92,20 @@ public class PropertyPanel {
         labelWrapper.getChildren().add(noSelectionLabel);
         VBox.setVgrow(labelWrapper, Priority.ALWAYS);
 
+        // Create a wrapper pane and place the property box inside it
+        Pane propertyWrapper = new StackPane();
+        propertyWrapper.getStyleClass().add("control-box");
+        propertyWrapper.setPadding(new Insets(10.0));
+        VBox.setVgrow(propertyWrapper, Priority.ALWAYS);
+        // Create a scroll pane to contain the property box inside the wrapper
+        ScrollPane scroll = new ScrollPane();
+        scroll.getStyleClass().add("property-scroll");
         propertyBox = new VBox(10.0);
-        propertyBox.setPadding(new Insets(10.0, 10.0, 10.0, 10.0));
-        propertyBox.getStyleClass().add("property-box");
-        VBox.setVgrow(propertyBox, Priority.ALWAYS);
-        vbox.getChildren().add(propertyBox);
+        propertyBox.setPadding(new Insets(5.0));
+        scroll.setContent(propertyBox);
+        scroll.setFitToWidth(true);
+        propertyWrapper.getChildren().add(scroll);
+        vbox.getChildren().add(propertyWrapper);
 
         descriptionLabel = new Label();
         descriptionLabel.setWrapText(true);
