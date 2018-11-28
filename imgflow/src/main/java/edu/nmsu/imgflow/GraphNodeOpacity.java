@@ -27,6 +27,8 @@ public class GraphNodeOpacity extends GraphNode {
 
     public String getBaseName() { return "Opacity"; }
 
+    public String getDescription() { return "Adjust the opacity of the image as a percentage."; }
+
     /**
      * Override processImage to modify the opacity of the input image
      * and send it to the output.

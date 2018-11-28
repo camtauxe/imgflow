@@ -34,6 +34,8 @@ public class GraphNodeResize extends GraphNode {
 
     public String getBaseName() { return "Resize"; }
 
+    public String getDescription() { return "Resize the image to a specified width and height as a number of pixels."; }
+
     /**
      * Override processImage to resize the input image
      * and send it to the output.
