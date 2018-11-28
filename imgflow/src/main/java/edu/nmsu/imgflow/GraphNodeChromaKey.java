@@ -17,6 +17,7 @@ public class GraphNodeChromaKey extends GraphNode {
     private NodeSocketOutput out;
     
     private NodePropertySlider thresholdSlider;
+    private NodePropertyColor colorSelect = new NodePropertyColor(this, "Color", Color.LIME);
     
     public GraphNodeChromaKey() {
         in  = inputSockets.get(0);
@@ -24,10 +25,14 @@ public class GraphNodeChromaKey extends GraphNode {
         
         thresholdSlider = new NodePropertySlider(this, "Threshold (%)", 0, 100, 0);
         properties.add(thresholdSlider);
-        //TODO: add color picker variable
+        properties.add(colorSelect);
     }
     
     public String getBaseName() { return "Chroma Key"; }
+    
+    public String getDescription() {
+        return "Select a color to make transparent and adjust threshold for similar colors";
+    }
     
     /**
      * Overright processImage to set all pixels within the threshold of
@@ -43,12 +48,12 @@ public class GraphNodeChromaKey extends GraphNode {
             return;
         }
         
-        // Temporary color value; default green
-        Color target = Color.LIME;
+        //target color
+        Color target = colorSelect.getValue();
         
+        //image properties
         int width  = (int)inImg.getWidth();
         int height = (int)inImg.getHeight();
-        
         PixelReader reader = inImg.getPixelReader();
         
         // Create a new writable image for the output

@@ -30,8 +30,11 @@ public class GraphNodeRotate extends GraphNode {
     public String getBaseName() { return "Rotate";}
 
     public String getDescription() {
-        return "Rotate an image by the amount chosen.";
+        return "Rotate an image in increments of 90 degrees.";
     }
+    
+    public int getNumInputSockets()  { return 1; }
+    public int getNumOutputSockets() { return 1; }
 
     /**
      * Override processImage to rotate the image as specified
