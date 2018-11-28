@@ -34,6 +34,10 @@ public class GraphNodeComposite extends GraphNode {
     
     public String getBaseName() { return "Composite"; }
     
+    public String getDescription() {
+        return "Superimpose one image on top of another. Use the offset to adjust the position of the top image.";
+    }
+
     /**
      * Override processImage to composite the two images.
      */

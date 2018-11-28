@@ -27,6 +27,11 @@ public class GraphNodeJoinColor extends GraphNode {
 
     public String getBaseName() { return "Join RGB"; }
     
+    public String getDescription() {
+        return "Joins three input color channels(RGB Images) into a coherent image." +
+               "The inputs, in order from top to bottom, are Red, Green, and Blue";
+    }
+    
     /**
      * Override processImage to join the colors of the input images
      * and send a composite image to the output.
@@ -47,7 +52,21 @@ public class GraphNodeJoinColor extends GraphNode {
         PixelReader gReader = gImgIn.getPixelReader();
         PixelReader bReader = bImgIn.getPixelReader();
 
-        // TODO: Fail gently if input images are different sizes
+        /**
+         * fail gently if input images are different sizes
+         * use shortest dimensions of the three images
+         */
+        //get shortest width
+        if(width > (int)gImgIn.getWidth())
+            width = (int)gImgIn.getWidth();
+        if(width > (int)bImgIn.getWidth())
+            width = (int)bImgIn.getWidth();
+            
+        //get shortest height
+        if(height > (int)gImgIn.getHeight())
+            height = (int)gImgIn.getHeight();
+        if(height > (int)bImgIn.getHeight())
+            height = (int)bImgIn.getHeight();
         
         //create writable image & pixelwriter for composite output
         WritableImage imgOut = new WritableImage(width, height);

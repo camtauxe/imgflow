@@ -24,6 +24,11 @@ public class GraphNodeMatte extends GraphNode {
     }
     
     public String getBaseName() { return "Matte"; }
+    
+    public String getDescription() {
+        return "Using the image given to the top node, adjust the trasparency of the bottom." +
+               "The brighter the color above, the more transparent the color on the image below becomes";
+    }
 
     public int getNumInputSockets()  { return 2; }
     public int getNumOutputSockets() { return 1; }    
