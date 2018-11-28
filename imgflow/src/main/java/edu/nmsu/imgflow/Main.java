@@ -95,6 +95,7 @@ public class Main extends Application {
         // Set instance
         instance = this;
         stage = s;
+        stage.setTitle("Imgflow");
 
         // Build scene with the result of createMainWindow() as
         // the root node, and add to stage.

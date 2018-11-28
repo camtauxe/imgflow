@@ -49,7 +49,7 @@ public abstract class NodeFactory {
             case "File OUT":        return "fileout";
             case "Invert":          return "invert";
             case "Color Effects":   return "coloreffects";
-            case "opacity":         return "Opacity";
+            case "Opacity":         return "opacity";
             case "Split RGB":       return "splitcolor";
             case "Join RGB":        return "joincolor";
             case "Matte":           return "matte";
@@ -76,21 +76,20 @@ public abstract class NodeFactory {
         menu.getItems().addAll(
             buildNodeMenuItem("filein",         "File IN"),
             buildNodeMenuItem("fileout",        "File OUT"),
+            buildNodeMenuItem("rectangle",      "Rectangle"),
+            buildNodeMenuItem("ellipse",        "Ellipse"),
             buildNodeMenuItem("invert",         "Invert Colors"),
             buildNodeMenuItem("coloreffects",   "Color Effects"),
             buildNodeMenuItem("opacity",        "Opacity"),
+            buildNodeMenuItem("chromakey",      "Chroma Key"),
             buildNodeMenuItem("splitcolor",     "Split RGB"),
             buildNodeMenuItem("joincolor",      "Join RBG"),
             buildNodeMenuItem("matte",          "Matte"),
+            buildNodeMenuItem("composite",      "Composite"),
             buildNodeMenuItem("crop",           "Crop"),
             buildNodeMenuItem("resize",         "Resize"),
-            buildNodeMenuItem("composite",      "Composite"),
-            buildNodeMenuItem("chromakey",      "Chroma Key"),
-            buildNodeMenuItem("rectangle",      "Rectangle"),
-            buildNodeMenuItem("ellipse",        "Ellipse"),
             buildNodeMenuItem("flip",           "Flip"),
-            buildNodeMenuItem("rotate",         "Rotate"),
-            buildNodeMenuItem("test",           "Test")
+            buildNodeMenuItem("rotate",         "Rotate")
         );
 
         return menu;
