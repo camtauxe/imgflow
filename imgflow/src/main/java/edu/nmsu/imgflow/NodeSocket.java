@@ -38,6 +38,11 @@ public abstract class NodeSocket {
      */
     protected Point2D connectingPosition;
 
+    /**
+     * todo: finish up comment for this flag
+     */
+    protected int hasBeenVisitedFlag;
+
     // ################################
     // # CONSTRUCTOR
     // ################################
