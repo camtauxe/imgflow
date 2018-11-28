@@ -11,6 +11,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
 
 /**
  * Main class for the Imgflow application
@@ -96,6 +97,7 @@ public class Main extends Application {
         instance = this;
         stage = s;
         stage.setTitle("Imgflow");
+        stage.getIcons().add(new Image("icon.png"));
 
         // Build scene with the result of createMainWindow() as
         // the root node, and add to stage.

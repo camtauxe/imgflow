@@ -63,6 +63,40 @@ public class Graph {
     }
 
     /**
+     * Determine whether or connecting the two given sockets would be safe (as in
+     * not creating a loop in the graph)
+     */
+    public boolean isConnectionSafe(NodeSocketOutput output, NodeSocketInput input) {
+        GraphNode fromNode = output.getParentNode();
+        GraphNode toNode = input.getParentNode();
+
+        // Search for the first node from the second. If it is found,
+        // there is a loop
+        return !(searchForNode(toNode, fromNode));
+    }
+
+    /**
+     * Recursively walk through the graph (downstream) from the given starting
+     * node to find the given target node. Returns whether or not the target node
+     * was found
+     */
+    private boolean searchForNode(GraphNode start, GraphNode target) {
+        boolean found = false;
+        for (NodeSocketOutput output : start.getOutputSockets()) {
+            NodeSocketInput otherSocket = output.getConnectingSocket();
+            if (otherSocket != null) {
+                GraphNode otherNode = otherSocket.getParentNode();
+                if (otherNode == target) {
+                    found = true;
+                    break;
+                }
+                found = found || searchForNode(otherNode, target);
+            }
+        }
+        return found;
+    }
+
+    /**
      * Change the graph's selected node to the given node.
      * Give 'null' to deselect the currently selected node.
      * If the given node is already selected or is not in the

@@ -322,12 +322,18 @@ public class Viewport {
                     if (socket instanceof NodeSocketInput && connectingSocket instanceof NodeSocketOutput) {
                         NodeSocketInput in = (NodeSocketInput)socket;
                         NodeSocketOutput out = (NodeSocketOutput)connectingSocket;
-                        out.connect(in);
+                        if (graph.isConnectionSafe(out, in))
+                            out.connect(in);
+                        else
+                            System.out.println("Could not create connection as it would create a loop in the graph!");
                     }
                     else if (socket instanceof NodeSocketOutput && connectingSocket instanceof NodeSocketInput) {
                         NodeSocketInput in = (NodeSocketInput)connectingSocket;
                         NodeSocketOutput out = (NodeSocketOutput)socket;
-                        in.connect(out);
+                        if (graph.isConnectionSafe(out, in))
+                            in.connect(out);
+                        else
+                            System.out.println("Could not create connection as it would create a loop in the graph!");
                     }
                 }
                 connectingSocket = null;
