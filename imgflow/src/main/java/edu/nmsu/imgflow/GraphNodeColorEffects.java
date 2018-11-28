@@ -32,6 +32,8 @@ public class GraphNodeColorEffects extends GraphNode {
 
     public String getBaseName() { return "Color Effects"; }
 
+    public String getDescription() { return "Modify the hue, saturation, and brightness of the image."; }
+
     /**
      * Override processImage to modify the colors of the input image
      * and send it to the output.

@@ -32,6 +32,11 @@ public class GraphNodeCrop extends GraphNode {
 
     public String getBaseName() { return "Crop"; }
 
+    public String getDescription() { return "The X axis is a positive scale starting from the left and the Y axis is a"
+                                            + " positive scale from the top. The origin is the top left point of the"
+                                            + " output image. The pixel width and height are the dimensions of the"
+                                            + " output"; }
+
     /**
      * Override processImage to crop the input image
      * and send it to the output.
